@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QuizHub v5</title>
+<title>QuizHub v6</title>
 
 <style>
 *{box-sizing:border-box}
@@ -198,20 +198,29 @@ button:disabled{
 <div class="wrap">
 
 <h1>QuizHub</h1>
-<div class="sub">Simple Present Tense • Practice & Analysis</div>
+
+<div class="sub">
+Simple Present Tense • Adaptive Practice
+</div>
+
 
 <!-- START -->
+
 <section id="start" class="card">
 
-<div class="badge">V5 • English Grammar</div>
+<div class="badge">
+V6 • Adaptive Learning
+</div>
 
 <h2>Start Quiz</h2>
 
 <p class="small">
-Test your understanding of the Simple Present Tense.
+QuizHub will automatically give more practice on areas where the child makes mistakes.
 </p>
 
-<label for="name">Child's name</label>
+<label for="name">
+Child's name
+</label>
 
 <input
  id="name"
@@ -220,29 +229,45 @@ Test your understanding of the Simple Present Tense.
  maxlength="50"
 >
 
-<button onclick="startQuiz()">Start Quiz →</button>
+<button
+ id="startButton"
+ onclick="startQuiz()">
+Start Quiz →
+</button>
 
-<div class="status" id="connection">
-📱 Ready for quiz
+<div
+ class="status"
+ id="connection">
+⏳ Connecting...
 </div>
 
 </section>
 
 
 <!-- QUIZ -->
+
 <section id="quiz" class="card hidden">
 
-<div class="qno" id="qno"></div>
+<div
+ class="qno"
+ id="qno">
+</div>
 
 <div class="progress">
 <div id="bar"></div>
 </div>
 
-<div class="q" id="question"></div>
+<div
+ class="q"
+ id="question">
+</div>
 
 <div id="options"></div>
 
-<div class="feedback" id="feedback"></div>
+<div
+ class="feedback"
+ id="feedback">
+</div>
 
 <button
  id="next"
@@ -255,71 +280,128 @@ Next Question →
 
 
 <!-- RESULT -->
+
 <section id="result" class="card hidden">
 
-<h2 class="center">Quiz Analysis</h2>
+<h2 class="center">
+Quiz Analysis
+</h2>
 
-<p id="child" class="center"></p>
+<p
+ id="child"
+ class="center">
+</p>
 
-<div class="score" id="score"></div>
+<div
+ class="score"
+ id="score">
+</div>
 
-<p id="summary" class="summary"></p>
+<p
+ id="summary"
+ class="summary">
+</p>
+
 
 <div class="analysis strength">
+
 <b>💪 Strengths</b>
-<div id="strengths"></div>
+
+<div id="strengths">
 </div>
+
+</div>
+
 
 <div class="analysis weak">
+
 <b>🎯 Weaknesses</b>
-<div id="weaknesses"></div>
+
+<div id="weaknesses">
 </div>
+
+</div>
+
 
 <div class="analysis improve">
+
 <b>📈 Scope of Improvement</b>
-<div id="improvement"></div>
+
+<div id="improvement">
 </div>
 
-<div class="status" id="saveStatus"></div>
+</div>
+
+
+<div
+ class="status"
+ id="saveStatus">
+</div>
 
 <br>
 
-<button onclick="restartQuiz()">🔄 Try Again</button>
+<button onclick="restartQuiz()">
+🔄 Try Again
+</button>
 
 </section>
 
 </div>
 
 
+<!-- SUPABASE JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
 <script>
 
 /* =========================================================
-   SUPABASE CONFIGURATION
-   =========================================================
-
-   After creating your Supabase project, enter:
-
-   SUPABASE_URL = your project URL
-   SUPABASE_KEY = your anon/publishable key
-
-   Example:
-
-   const SUPABASE_URL="https://xxxxx.supabase.co";
-   const SUPABASE_KEY="your-key";
-
+   SUPABASE
 ========================================================= */
 
-const SUPABASE_URL="https://sfevtelcfyhhizklevyo.supabase.co";
-const SUPABASE_KEY="sb_publishable_euBKMDH0SQ6DUnWxti0P1g_1sg1Fzvp";
+const SUPABASE_URL =
+"https://sfevtelcfyhhizklevyo.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_euBKMDH0SQ6DUnWxti0P1g_1sg1Fzvp";
+
+
+const supabaseClient =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+/*
+   A question becomes mastered after this many
+   consecutive correct answers.
+*/
+
+const MASTER_THRESHOLD = 3;
+
+
+/*
+   Number of questions in one quiz.
+*/
+
+const QUIZ_SIZE = 20;
+
 
 /* =========================================================
    QUESTIONS
 ========================================================= */
 
-const questions=[
+const questions = [
 
 {
 id:"Q001",
+db_id:1,
 q:"I ___ to school every day.",
 o:["goes","going","go","gone"],
 a:2,
@@ -329,6 +411,7 @@ e:"With I, use the base verb: go."
 
 {
 id:"Q002",
+db_id:2,
 q:"She ___ English very well.",
 o:["speaks","speak","speaking","spoken"],
 a:0,
@@ -338,6 +421,7 @@ e:"She is singular, so use speaks."
 
 {
 id:"Q003",
+db_id:3,
 q:"They ___ cricket on Sundays.",
 o:["plays","playing","played","play"],
 a:3,
@@ -347,6 +431,7 @@ e:"They takes the base verb: play."
 
 {
 id:"Q004",
+db_id:4,
 q:"My brother ___ TV in the evening.",
 o:["watch","watched","watches","watching"],
 a:2,
@@ -356,6 +441,7 @@ e:"My brother is singular: watches."
 
 {
 id:"Q005",
+db_id:5,
 q:"Everyone ___ a different opinion.",
 o:["has","have","having","are"],
 a:0,
@@ -365,6 +451,7 @@ e:"Everyone is grammatically singular: has."
 
 {
 id:"Q006",
+db_id:6,
 q:"We ___ our homework regularly.",
 o:["does","doing","do","done"],
 a:2,
@@ -374,6 +461,7 @@ e:"We takes the base verb: do."
 
 {
 id:"Q007",
+db_id:7,
 q:"The dog ___ loudly at night.",
 o:["bark","barking","barked","barks"],
 a:3,
@@ -383,6 +471,7 @@ e:"The dog is singular: barks."
 
 {
 id:"Q008",
+db_id:8,
 q:"You ___ very fast.",
 o:["run","runs","running","ran"],
 a:0,
@@ -392,6 +481,7 @@ e:"You takes the base verb: run."
 
 {
 id:"Q009",
+db_id:9,
 q:"My mother ___ delicious food.",
 o:["cooks","cook","cooking","cooked"],
 a:0,
@@ -401,6 +491,7 @@ e:"My mother is singular: cooks."
 
 {
 id:"Q010",
+db_id:10,
 q:"The sun ___ in the east.",
 o:["rise","rising","rises","rose"],
 a:2,
@@ -410,6 +501,7 @@ e:"General facts use simple present: rises."
 
 {
 id:"Q011",
+db_id:11,
 q:"He ___ his teeth every morning.",
 o:["brushes","brush","brushing","brushed"],
 a:0,
@@ -419,6 +511,7 @@ e:"He is singular; brush becomes brushes."
 
 {
 id:"Q012",
+db_id:12,
 q:"Each student ___ a book.",
 o:["have","has","having","are"],
 a:1,
@@ -428,6 +521,7 @@ e:"Each is singular: has."
 
 {
 id:"Q013",
+db_id:13,
 q:"Nobody ___ the answer.",
 o:["knows","know","knowing","are"],
 a:0,
@@ -437,6 +531,7 @@ e:"Nobody is singular: knows."
 
 {
 id:"Q014",
+db_id:14,
 q:"My friends ___ near my house.",
 o:["lives","live","living","lived"],
 a:1,
@@ -446,6 +541,7 @@ e:"Friends is plural: live."
 
 {
 id:"Q015",
+db_id:15,
 q:"Does she ___ coffee?",
 o:["likes","like","liking","liked"],
 a:1,
@@ -455,6 +551,7 @@ e:"After does, use the base verb: like."
 
 {
 id:"Q016",
+db_id:16,
 q:"He ___ not play football.",
 o:["do","does","is","are"],
 a:1,
@@ -464,6 +561,7 @@ e:"Use does + not + base verb."
 
 {
 id:"Q017",
+db_id:17,
 q:"I ___ not watch TV every day.",
 o:["does","do","am","is"],
 a:1,
@@ -473,6 +571,7 @@ e:"With I, use do + not + base verb."
 
 {
 id:"Q018",
+db_id:18,
 q:"___ they play cricket?",
 o:["Does","Do","Is","Are"],
 a:1,
@@ -482,6 +581,7 @@ e:"With they, use Do."
 
 {
 id:"Q019",
+db_id:19,
 q:"___ your sister work here?",
 o:["Do","Does","Are","Is"],
 a:1,
@@ -491,6 +591,7 @@ e:"Your sister is singular, so use Does."
 
 {
 id:"Q020",
+db_id:20,
 q:"Water ___ at 100°C.",
 o:["boils","boil","boiling","boiled"],
 a:0,
@@ -500,17 +601,28 @@ e:"General facts use simple present: boils."
 
 ];
 
+
 /* =========================================================
-   QUIZ VARIABLES
+   VARIABLES
 ========================================================= */
 
-let i=0;
-let score=0;
-let name="";
-let answered=false;
+let i = 0;
 
-let wrong=[];
-let correct=[];
+let score = 0;
+
+let name = "";
+
+let answered = false;
+
+let currentUser = null;
+
+let wrong = [];
+
+let correct = [];
+
+let quizQuestions = [];
+
+let progressMap = {};
 
 
 /* =========================================================
@@ -521,7 +633,9 @@ function show(id){
 
  document
  .querySelectorAll("section")
- .forEach(s=>s.classList.add("hidden"));
+ .forEach(s =>
+   s.classList.add("hidden")
+ );
 
  document
  .getElementById(id)
@@ -536,26 +650,368 @@ function show(id){
 
 
 /* =========================================================
+   LOAD CURRENT USER
+========================================================= */
+
+async function loadCurrentUser(){
+
+ try{
+
+   const {
+     data,
+     error
+   } = await supabaseClient.auth.getUser();
+
+
+   if(error){
+
+     console.log(
+       "Auth error:",
+       error.message
+     );
+
+     currentUser = null;
+
+     document
+     .getElementById("connection")
+     .textContent =
+     "⚠️ No logged-in user.";
+
+     return;
+
+   }
+
+
+   currentUser = data.user;
+
+
+   if(currentUser){
+
+     document
+     .getElementById("connection")
+     .textContent =
+     "☁️ Connected • User UID detected";
+
+     console.log(
+       "Current user:",
+       currentUser.id
+     );
+
+   }else{
+
+     document
+     .getElementById("connection")
+     .textContent =
+     "⚠️ Please log in before starting.";
+
+   }
+
+ }catch(error){
+
+   console.log(
+     "User loading error:",
+     error
+   );
+
+   currentUser = null;
+
+   document
+   .getElementById("connection")
+   .textContent =
+   "⚠️ Unable to connect to account.";
+
+ }
+
+}
+
+
+/* =========================================================
+   LOAD USER PROGRESS
+========================================================= */
+
+async function loadUserProgress(){
+
+ if(!currentUser){
+
+   return;
+
+ }
+
+ try{
+
+   const {
+     data,
+     error
+   } = await supabaseClient
+
+     .from("user_question_progress")
+
+     .select(
+       "id,user_id,question_id,attempts,mistakes,consecutive_correct,mastered,last_attempt"
+     )
+
+     .eq(
+       "user_id",
+       currentUser.id
+     );
+
+
+   if(error){
+
+     console.log(
+       "Progress loading error:",
+       error
+     );
+
+     return;
+
+   }
+
+
+   progressMap = {};
+
+
+   data.forEach(row => {
+
+     progressMap[row.question_id] = row;
+
+   });
+
+
+   console.log(
+     "Progress loaded:",
+     progressMap
+   );
+
+
+ }catch(error){
+
+   console.log(
+     "Progress error:",
+     error
+   );
+
+ }
+
+}
+
+
+/* =========================================================
+   SELECT ADAPTIVE QUESTIONS
+========================================================= */
+
+function selectAdaptiveQuestions(){
+
+ const available =
+ questions.filter(q => {
+
+   const p =
+   progressMap[q.db_id];
+
+   return !p || !p.mastered;
+
+ });
+
+
+ /*
+   If there are enough unmastered questions,
+   use only those.
+
+   This is how mastered questions gradually
+   disappear from the quiz.
+ */
+
+ let pool =
+ available.length >= QUIZ_SIZE
+ ? available
+ : available.slice();
+
+
+ /*
+   Questions with mistakes get priority.
+ */
+
+ pool.sort((a,b) => {
+
+   const pa =
+   progressMap[a.db_id];
+
+   const pb =
+   progressMap[b.db_id];
+
+
+   const ma =
+   pa ? pa.mistakes : 0;
+
+   const mb =
+   pb ? pb.mistakes : 0;
+
+
+   if(mb !== ma){
+
+     return mb - ma;
+
+   }
+
+
+   const ca =
+   pa ? pa.consecutive_correct : 0;
+
+   const cb =
+   pb ? pb.consecutive_correct : 0;
+
+
+   return ca - cb;
+
+ });
+
+
+ /*
+   If fewer than QUIZ_SIZE remain,
+   fill the remaining positions with
+   non-mastered/old questions.
+
+   This prevents an empty quiz while the
+   question bank is still small.
+ */
+
+ if(pool.length < QUIZ_SIZE){
+
+   const mastered =
+   questions.filter(q => {
+
+     const p =
+     progressMap[q.db_id];
+
+     return p && p.mastered;
+
+   });
+
+
+   mastered.sort(() => Math.random() - 0.5);
+
+
+   pool = pool.concat(
+     mastered.slice(
+       0,
+       QUIZ_SIZE - pool.length
+     )
+   );
+
+ }
+
+
+ /*
+   Shuffle slightly while preserving
+   mistake priority near the top.
+ */
+
+ const first =
+ pool.slice(
+   0,
+   Math.min(10,pool.length)
+ );
+
+
+ const rest =
+ pool.slice(
+   Math.min(10,pool.length)
+ );
+
+
+ rest.sort(
+   () => Math.random() - 0.5
+ );
+
+
+ return first
+ .concat(rest)
+ .slice(0,QUIZ_SIZE);
+
+}
+
+
+/* =========================================================
    START QUIZ
 ========================================================= */
 
-function startQuiz(){
+async function startQuiz(){
 
- name=document
+ name =
+ document
  .getElementById("name")
  .value
  .trim();
 
+
  if(!name){
-   name="Student";
+
+   name = "Student";
+
  }
 
- i=0;
- score=0;
- wrong=[];
- correct=[];
+
+ if(!currentUser){
+
+   alert(
+     "Please log in first so QuizHub can save this child's progress."
+   );
+
+   return;
+
+ }
+
+
+ const button =
+ document.getElementById("startButton");
+
+
+ button.disabled = true;
+
+ button.textContent =
+ "Loading...";
+
+
+ await loadUserProgress();
+
+
+ quizQuestions =
+ selectAdaptiveQuestions();
+
+
+ if(!quizQuestions.length){
+
+   alert(
+     "No questions are currently available."
+   );
+
+   button.disabled = false;
+
+   button.textContent =
+   "Start Quiz →";
+
+   return;
+
+ }
+
+
+ i = 0;
+
+ score = 0;
+
+ wrong = [];
+
+ correct = [];
+
+
+ button.disabled = false;
+
+ button.textContent =
+ "Start Quiz →";
+
 
  show("quiz");
+
 
  render();
 
@@ -563,53 +1019,76 @@ function startQuiz(){
 
 
 /* =========================================================
-   RENDER QUESTION
+   RENDER
 ========================================================= */
 
 function render(){
 
- answered=false;
+ answered = false;
 
- const x=questions[i];
+
+ const x =
+ quizQuestions[i];
+
 
  document
  .getElementById("qno")
- .textContent=
- `Question ${i+1} of ${questions.length}`;
+ .textContent =
+ `Question ${i+1} of ${quizQuestions.length}`;
+
 
  document
  .getElementById("bar")
- .style.width=
- ((i)/questions.length*100)+"%";
+ .style.width =
+ ((i) /
+ quizQuestions.length *
+ 100) + "%";
+
 
  document
  .getElementById("question")
- .textContent=x.q;
+ .textContent =
+ x.q;
 
- const options=
+
+ const options =
  document.getElementById("options");
 
- options.innerHTML="";
+
+ options.innerHTML = "";
+
 
  document
  .getElementById("feedback")
- .textContent="";
+ .textContent = "";
 
- const next=
+
+ const next =
  document.getElementById("next");
+
 
  next.classList.add("hidden");
 
- x.o.forEach((v,n)=>{
 
-   const b=document.createElement("button");
+ x.o.forEach((v,n) => {
 
-   b.className="option";
+   const b =
+   document.createElement("button");
 
-   b.textContent=
-   String.fromCharCode(65+n)+") "+v;
 
-   b.onclick=()=>answer(n,b);
+   b.className =
+   "option";
+
+
+   b.textContent =
+   String.fromCharCode(65+n)
+   + ") "
+   + v;
+
+
+   b.onclick =
+   () => answer(n,b);
+
 
    options.appendChild(b);
 
@@ -622,53 +1101,340 @@ function render(){
    ANSWER
 ========================================================= */
 
-function answer(n,b){
+async function answer(n,b){
 
- if(answered)return;
+ if(answered){
 
- answered=true;
-
- const x=questions[i];
-
- const buttons=[
-   ...document.querySelectorAll(".option")
- ];
-
- buttons[x.a].classList.add("correct");
-
- if(n===x.a){
-
-   score++;
-
-   correct.push(x.t);
-
-   document
-   .getElementById("feedback")
-   .textContent=
-   "✅ Correct! "+x.e;
-
- }else{
-
-   b.classList.add("wrong");
-
-   wrong.push(x.t);
-
-   document
-   .getElementById("feedback")
-   .textContent=
-   "❌ Incorrect. "+x.e;
+   return;
 
  }
 
- const next=
+
+ answered = true;
+
+
+ const x =
+ quizQuestions[i];
+
+
+ const isCorrect =
+ n === x.a;
+
+
+ /*
+   Update progress immediately.
+ */
+
+ await saveQuestionProgress(
+   x,
+   isCorrect
+ );
+
+
+ const buttons =
+ [
+   ...document.querySelectorAll(".option")
+ ];
+
+
+ buttons[x.a]
+ .classList
+ .add("correct");
+
+
+ if(isCorrect){
+
+   score++;
+
+
+   correct.push(x.t);
+
+
+   document
+   .getElementById("feedback")
+   .textContent =
+   "✅ Correct! " + x.e;
+
+ }else{
+
+   b.classList
+   .add("wrong");
+
+
+   wrong.push(x.t);
+
+
+   document
+   .getElementById("feedback")
+   .textContent =
+   "❌ Incorrect. " + x.e;
+
+ }
+
+
+ const next =
  document.getElementById("next");
 
- next.textContent=
- i===questions.length-1
- ?"See Analysis →"
- :"Next Question →";
+
+ next.textContent =
+ i === quizQuestions.length - 1
+ ? "See Analysis →"
+ : "Next Question →";
+
 
  next.classList.remove("hidden");
+
+}
+
+
+/* =========================================================
+   SAVE / UPDATE QUESTION PROGRESS
+========================================================= */
+
+async function saveQuestionProgress(
+ question,
+ isCorrect
+){
+
+ if(!currentUser){
+
+   console.log(
+     "No logged-in user."
+   );
+
+   return;
+
+ }
+
+
+ try{
+
+   /*
+      First find the existing progress row.
+   */
+
+   const {
+     data,
+     error
+   } = await supabaseClient
+
+     .from("user_question_progress")
+
+     .select(
+       "id,attempts,mistakes,consecutive_correct,mastered"
+     )
+
+     .eq(
+       "user_id",
+       currentUser.id
+     )
+
+     .eq(
+       "question_id",
+       question.db_id
+     )
+
+     .maybeSingle();
+
+
+   if(error){
+
+     console.log(
+       "Progress lookup error:",
+       error
+     );
+
+     return;
+
+   }
+
+
+   let attempts = 1;
+
+   let mistakes = 0;
+
+   let consecutiveCorrect = 0;
+
+   let mastered = false;
+
+
+   /*
+      Existing record
+   */
+
+   if(data){
+
+     attempts =
+     (data.attempts || 0) + 1;
+
+
+     mistakes =
+     (data.mistakes || 0)
+     + (isCorrect ? 0 : 1);
+
+
+     if(isCorrect){
+
+       consecutiveCorrect =
+       (data.consecutive_correct || 0)
+       + 1;
+
+     }else{
+
+       consecutiveCorrect = 0;
+
+     }
+
+
+     mastered =
+     consecutiveCorrect >=
+     MASTER_THRESHOLD;
+
+   }
+
+
+   /*
+      New record
+   */
+
+   else{
+
+     attempts = 1;
+
+     mistakes =
+     isCorrect ? 0 : 1;
+
+     consecutiveCorrect =
+     isCorrect ? 1 : 0;
+
+     mastered =
+     consecutiveCorrect >=
+     MASTER_THRESHOLD;
+
+   }
+
+
+   const updateData = {
+
+     user_id:
+     currentUser.id,
+
+     question_id:
+     question.db_id,
+
+     attempts:
+     attempts,
+
+     mistakes:
+     mistakes,
+
+     consecutive_correct:
+     consecutiveCorrect,
+
+     mastered:
+     mastered,
+
+     last_attempt:
+     new Date().toISOString()
+
+   };
+
+
+   /*
+      Update existing row
+   */
+
+   if(data){
+
+     const {
+       error:updateError
+     } = await supabaseClient
+
+       .from("user_question_progress")
+
+       .update(updateData)
+
+       .eq(
+         "id",
+         data.id
+       );
+
+
+     if(updateError){
+
+       console.log(
+         "Progress update error:",
+         updateError
+       );
+
+     }
+
+   }
+
+
+   /*
+      Insert new row
+   */
+
+   else{
+
+     const {
+       error:insertError
+     } = await supabaseClient
+
+       .from("user_question_progress")
+
+       .insert(updateData);
+
+
+     if(insertError){
+
+       console.log(
+         "Progress insert error:",
+         insertError
+       );
+
+     }
+
+   }
+
+
+   /*
+      Update local progress cache too.
+   */
+
+   progressMap[question.db_id] = {
+
+     attempts:
+     attempts,
+
+     mistakes:
+     mistakes,
+
+     consecutive_correct:
+     consecutiveCorrect,
+
+     mastered:
+     mastered
+
+   };
+
+
+   console.log(
+     "Question progress:",
+     question.id,
+     updateData
+   );
+
+
+ }catch(error){
+
+   console.log(
+     "Progress save error:",
+     error
+   );
+
+ }
 
 }
 
@@ -681,7 +1447,8 @@ function nextQuestion(){
 
  i++;
 
- if(i<questions.length){
+
+ if(i < quizQuestions.length){
 
    render();
 
@@ -700,49 +1467,58 @@ function nextQuestion(){
 
 function uniq(a){
 
- return [...new Set(a)];
+ return [
+   ...new Set(a)
+ ];
 
 }
 
 
 /* =========================================================
-   SAVE ONLINE
+   SAVE QUIZ RESULT
 ========================================================= */
 
 async function saveOnline(result){
 
- if(!SUPABASE_URL || !SUPABASE_KEY){
+ if(!currentUser){
 
    return false;
 
  }
 
+
  try{
 
-   const r=await fetch(
-     SUPABASE_URL+
-     "/rest/v1/quiz_results",
-     {
-       method:"POST",
+   const {
+     error
+   } = await supabaseClient
 
-       headers:{
-         "Content-Type":"application/json",
-         "apikey":SUPABASE_KEY,
-         "Authorization":
-         "Bearer "+SUPABASE_KEY,
-         "Prefer":"return=minimal"
-       },
+     .from("quiz_results")
 
-       body:JSON.stringify(result)
+     .insert(result);
 
-     }
+
+   if(error){
+
+     console.log(
+       "Online save error:",
+       error
+     );
+
+     return false;
+
+   }
+
+
+   return true;
+
+
+ }catch(error){
+
+   console.log(
+     "Online save error:",
+     error
    );
-
-   return r.ok;
-
- }catch(e){
-
-   console.log("Online save error:",e);
 
    return false;
 
@@ -757,18 +1533,25 @@ async function saveOnline(result){
 
 async function finish(){
 
- const pct=
+ const total =
+ quizQuestions.length;
+
+
+ const pct =
  Math.round(
-   score/questions.length*100
+   score / total * 100
  );
 
- const strengths=
+
+ const strengths =
  uniq(correct);
 
- const weaknesses=
+
+ const weaknesses =
  uniq(wrong);
 
- const improvement=
+
+ const improvement =
  weaknesses.length
 
  ? `Practice more questions on ${weaknesses.join(", ")} and review the explanations.`
@@ -778,25 +1561,26 @@ async function finish(){
 
  document
  .getElementById("child")
- .textContent=
+ .textContent =
  `Child: ${name}`;
 
 
  document
  .getElementById("score")
- .textContent=
- `${score} / ${questions.length}`;
+ .textContent =
+ `${score} / ${total}`;
 
 
  document
  .getElementById("summary")
- .textContent=
+ .textContent =
  `Percentage: ${pct}%`;
 
 
  document
  .getElementById("strengths")
- .textContent=
+ .textContent =
+
  strengths.length
  ? strengths.join(" • ")
  : "Keep practicing all areas.";
@@ -804,7 +1588,8 @@ async function finish(){
 
  document
  .getElementById("weaknesses")
- .textContent=
+ .textContent =
+
  weaknesses.length
  ? weaknesses.join(" • ")
  : "No major weakness detected in this quiz.";
@@ -812,7 +1597,7 @@ async function finish(){
 
  document
  .getElementById("improvement")
- .textContent=
+ .textContent =
  improvement;
 
 
@@ -821,23 +1606,30 @@ async function finish(){
 
  document
  .getElementById("saveStatus")
- .textContent=
+ .textContent =
  "⏳ Saving result...";
 
 
- const saved=
+ const saved =
  await saveOnline({
 
-   child_name:name,
+   user_id:
+   currentUser.id,
+
+   child_name:
+   name,
 
    quiz_name:
    "Simple Present Tense",
 
-   score:score,
+   score:
+   score,
 
-   total:questions.length,
+   total:
+   total,
 
-   percentage:pct,
+   percentage:
+   pct,
 
    strengths:
    strengths.join(", "),
@@ -853,13 +1645,13 @@ async function finish(){
 
  document
  .getElementById("saveStatus")
- .textContent=
+ .textContent =
 
  saved
 
  ? "☁️ Result saved online successfully."
 
- : "📱 Result shown here. Online storage is not configured yet.";
+ : "⚠️ Quiz completed, but the result could not be saved.";
 
 }
 
@@ -872,11 +1664,54 @@ function restartQuiz(){
 
  document
  .getElementById("name")
- .value=name;
+ .value =
+ name;
+
 
  show("start");
 
 }
+
+
+/* =========================================================
+   AUTH STATE CHANGES
+========================================================= */
+
+supabaseClient.auth
+.onAuthStateChange(
+ async (event,session) => {
+
+   currentUser =
+   session
+   ? session.user
+   : null;
+
+
+   if(currentUser){
+
+     document
+     .getElementById("connection")
+     .textContent =
+     "☁️ Connected • User UID detected";
+
+   }else{
+
+     document
+     .getElementById("connection")
+     .textContent =
+     "⚠️ No logged-in user.";
+
+   }
+
+ }
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+loadCurrentUser();
 
 </script>
 
