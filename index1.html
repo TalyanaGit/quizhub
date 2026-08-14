@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QuizHub v5</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f4f7fb;
+ color:#172033
+}
+
+.wrap{
+ max-width:620px;
+ margin:auto;
+ padding:18px
+}
+
+h1{
+ font-size:30px;
+ margin:8px 0
+}
+
+h2{
+ margin-top:0
+}
+
+.sub{
+ color:#667085;
+ margin-bottom:18px
+}
+
+.card{
+ background:#fff;
+ border-radius:20px;
+ padding:22px;
+ box-shadow:0 8px 30px #0001;
+ margin:16px 0
+}
+
+.hidden{
+ display:none!important
+}
+
+input{
+ width:100%;
+ padding:14px;
+ border:1px solid #d0d5dd;
+ border-radius:12px;
+ margin:8px 0 16px;
+ font:inherit
+}
+
+button{
+ border:0;
+ border-radius:12px;
+ padding:14px 18px;
+ background:#4f46e5;
+ color:white;
+ font-weight:700;
+ font:inherit;
+ cursor:pointer
+}
+
+button:disabled{
+ opacity:.6;
+ cursor:not-allowed
+}
+
+.option{
+ display:block;
+ width:100%;
+ text-align:left;
+ background:white;
+ color:#172033;
+ border:2px solid #e2e8f0;
+ margin:10px 0
+}
+
+.option:hover{
+ border-color:#4f46e5
+}
+
+.option.correct{
+ border-color:#16a34a;
+ background:#ecfdf3
+}
+
+.option.wrong{
+ border-color:#dc2626;
+ background:#fef2f2
+}
+
+.progress{
+ height:9px;
+ background:#e5e7eb;
+ border-radius:10px;
+ overflow:hidden;
+ margin:12px 0 20px
+}
+
+.progress div{
+ height:100%;
+ width:0;
+ background:#4f46e5;
+ transition:width .3s
+}
+
+.qno{
+ color:#667085;
+ font-size:14px
+}
+
+.q{
+ font-size:22px;
+ font-weight:700;
+ line-height:1.45;
+ margin-bottom:12px
+}
+
+.feedback{
+ line-height:1.5;
+ margin-top:14px;
+ min-height:24px
+}
+
+.next{
+ margin-top:15px
+}
+
+.score{
+ text-align:center;
+ font-size:54px;
+ font-weight:800
+}
+
+.summary{
+ text-align:center;
+ font-size:18px
+}
+
+.analysis{
+ padding:15px;
+ border-radius:14px;
+ margin:10px 0;
+ line-height:1.5
+}
+
+.strength{
+ background:#ecfdf3
+}
+
+.weak{
+ background:#fef2f2
+}
+
+.improve{
+ background:#eff6ff
+}
+
+.small{
+ font-size:13px;
+ color:#667085
+}
+
+.status{
+ padding:10px;
+ border-radius:10px;
+ background:#f8fafc;
+ margin-top:12px;
+ font-size:13px
+}
+
+.center{
+ text-align:center
+}
+
+.badge{
+ display:inline-block;
+ background:#eef2ff;
+ color:#4338ca;
+ padding:6px 10px;
+ border-radius:20px;
+ font-size:13px;
+ font-weight:700;
+ margin-bottom:10px
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<h1>QuizHub</h1>
+<div class="sub">Simple Present Tense • Practice & Analysis</div>
+
+<!-- START -->
+<section id="start" class="card">
+
+<div class="badge">V5 • English Grammar</div>
+
+<h2>Start Quiz</h2>
+
+<p class="small">
+Test your understanding of the Simple Present Tense.
+</p>
+
+<label for="name">Child's name</label>
+
+<input
+ id="name"
+ placeholder="Enter child's name"
+ autocomplete="name"
+ maxlength="50"
+>
+
+<button onclick="startQuiz()">Start Quiz →</button>
+
+<div class="status" id="connection">
+📱 Ready for quiz
+</div>
+
+</section>
+
+
+<!-- QUIZ -->
+<section id="quiz" class="card hidden">
+
+<div class="qno" id="qno"></div>
+
+<div class="progress">
+<div id="bar"></div>
+</div>
+
+<div class="q" id="question"></div>
+
+<div id="options"></div>
+
+<div class="feedback" id="feedback"></div>
+
+<button
+ id="next"
+ class="next hidden"
+ onclick="nextQuestion()">
+Next Question →
+</button>
+
+</section>
+
+
+<!-- RESULT -->
+<section id="result" class="card hidden">
+
+<h2 class="center">Quiz Analysis</h2>
+
+<p id="child" class="center"></p>
+
+<div class="score" id="score"></div>
+
+<p id="summary" class="summary"></p>
+
+<div class="analysis strength">
+<b>💪 Strengths</b>
+<div id="strengths"></div>
+</div>
+
+<div class="analysis weak">
+<b>🎯 Weaknesses</b>
+<div id="weaknesses"></div>
+</div>
+
+<div class="analysis improve">
+<b>📈 Scope of Improvement</b>
+<div id="improvement"></div>
+</div>
+
+<div class="status" id="saveStatus"></div>
+
+<br>
+
+<button onclick="restartQuiz()">🔄 Try Again</button>
+
+</section>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE CONFIGURATION
+   =========================================================
+
+   After creating your Supabase project, enter:
+
+   SUPABASE_URL = your project URL
+   SUPABASE_KEY = your anon/publishable key
+
+   Example:
+
+   const SUPABASE_URL="https://xxxxx.supabase.co";
+   const SUPABASE_KEY="your-key";
+
+========================================================= */
+
+const SUPABASE_URL="";
+const SUPABASE_KEY="";
+
+
+/* =========================================================
+   QUESTIONS
+========================================================= */
+
+const questions=[
+
+{
+ q:"I ___ to school every day.",
+ o:["go","goes","going","gone"],
+ a:0,
+ t:"I/You/We/They",
+ e:"With I, use the base verb: go."
+},
+
+{
+ q:"She ___ English very well.",
+ o:["speak","speaks","speaking","spoken"],
+ a:1,
+ t:"He/She/It",
+ e:"She is singular, so use speaks."
+},
+
+{
+ q:"They ___ cricket on Sundays.",
+ o:["plays","play","playing","played"],
+ a:1,
+ t:"I/You/We/They",
+ e:"They takes the base verb: play."
+},
+
+{
+ q:"My brother ___ TV in the evening.",
+ o:["watch","watches","watching","watched"],
+ a:1,
+ t:"He/She/It",
+ e:"My brother is singular: watches."
+},
+
+{
+ q:"Everyone ___ a different opinion.",
+ o:["have","has","having","are"],
+ a:1,
+ t:"Singular subjects",
+ e:"Everyone is grammatically singular: has."
+},
+
+{
+ q:"We ___ our homework regularly.",
+ o:["does","do","doing","done"],
+ a:1,
+ t:"I/You/We/They",
+ e:"We takes the base verb: do."
+},
+
+{
+ q:"The dog ___ loudly at night.",
+ o:["bark","barks","barking","barked"],
+ a:1,
+ t:"He/She/It",
+ e:"The dog is singular: barks."
+},
+
+{
+ q:"You ___ very fast.",
+ o:["runs","run","running","ran"],
+ a:1,
+ t:"I/You/We/They",
+ e:"You takes the base verb: run."
+},
+
+{
+ q:"My mother ___ delicious food.",
+ o:["cook","cooks","cooking","cooked"],
+ a:1,
+ t:"He/She/It",
+ e:"My mother is singular: cooks."
+},
+
+{
+ q:"The sun ___ in the east.",
+ o:["rise","rises","rising","rose"],
+ a:1,
+ t:"General facts",
+ e:"General facts use simple present: rises."
+},
+
+{
+ q:"He ___ his teeth every morning.",
+ o:["brush","brushes","brushing","brushed"],
+ a:1,
+ t:"He/She/It",
+ e:"He is singular; brush becomes brushes."
+},
+
+{
+ q:"Each student ___ a book.",
+ o:["have","has","having","are"],
+ a:1,
+ t:"Singular subjects",
+ e:"Each is singular: has."
+},
+
+{
+ q:"Nobody ___ the answer.",
+ o:["know","knows","knowing","are"],
+ a:1,
+ t:"Singular subjects",
+ e:"Nobody is singular: knows."
+},
+
+{
+ q:"My friends ___ near my house.",
+ o:["lives","live","living","lived"],
+ a:1,
+ t:"I/You/We/They",
+ e:"Friends is plural: live."
+},
+
+{
+ q:"Does she ___ coffee?",
+ o:["likes","like","liking","liked"],
+ a:1,
+ t:"Do/Does questions",
+ e:"After does, use the base verb: like."
+},
+
+{
+ q:"He ___ not play football.",
+ o:["do","does","is","are"],
+ a:1,
+ t:"Do/Does negatives",
+ e:"Use does + not + base verb."
+},
+
+{
+ q:"I ___ not watch TV every day.",
+ o:["does","do","am","is"],
+ a:1,
+ t:"Do/Does negatives",
+ e:"With I, use do + not + base verb."
+},
+
+{
+ q:"___ they play cricket?",
+ o:["Does","Do","Is","Are"],
+ a:1,
+ t:"Do/Does questions",
+ e:"With they, use Do."
+},
+
+{
+ q:"___ your sister work here?",
+ o:["Do","Does","Are","Is"],
+ a:1,
+ t:"Do/Does questions",
+ e:"Your sister is singular, so use Does."
+},
+
+{
+ q:"Water ___ at 100°C.",
+ o:["boil","boils","boiling","boiled"],
+ a:1,
+ t:"General facts",
+ e:"General facts use simple present: boils."
+}
+
+];
+
+
+/* =========================================================
+   QUIZ VARIABLES
+========================================================= */
+
+let i=0;
+let score=0;
+let name="";
+let answered=false;
+
+let wrong=[];
+let correct=[];
+
+
+/* =========================================================
+   SHOW SCREEN
+========================================================= */
+
+function show(id){
+
+ document
+ .querySelectorAll("section")
+ .forEach(s=>s.classList.add("hidden"));
+
+ document
+ .getElementById(id)
+ .classList.remove("hidden");
+
+ window.scrollTo({
+   top:0,
+   behavior:"smooth"
+ });
+
+}
+
+
+/* =========================================================
+   START QUIZ
+========================================================= */
+
+function startQuiz(){
+
+ name=document
+ .getElementById("name")
+ .value
+ .trim();
+
+ if(!name){
+   name="Student";
+ }
+
+ i=0;
+ score=0;
+ wrong=[];
+ correct=[];
+
+ show("quiz");
+
+ render();
+
+}
+
+
+/* =========================================================
+   RENDER QUESTION
+========================================================= */
+
+function render(){
+
+ answered=false;
+
+ const x=questions[i];
+
+ document
+ .getElementById("qno")
+ .textContent=
+ `Question ${i+1} of ${questions.length}`;
+
+ document
+ .getElementById("bar")
+ .style.width=
+ ((i)/questions.length*100)+"%";
+
+ document
+ .getElementById("question")
+ .textContent=x.q;
+
+ const options=
+ document.getElementById("options");
+
+ options.innerHTML="";
+
+ document
+ .getElementById("feedback")
+ .textContent="";
+
+ const next=
+ document.getElementById("next");
+
+ next.classList.add("hidden");
+
+ x.o.forEach((v,n)=>{
+
+   const b=document.createElement("button");
+
+   b.className="option";
+
+   b.textContent=
+   String.fromCharCode(65+n)+") "+v;
+
+   b.onclick=()=>answer(n,b);
+
+   options.appendChild(b);
+
+ });
+
+}
+
+
+/* =========================================================
+   ANSWER
+========================================================= */
+
+function answer(n,b){
+
+ if(answered)return;
+
+ answered=true;
+
+ const x=questions[i];
+
+ const buttons=[
+   ...document.querySelectorAll(".option")
+ ];
+
+ buttons[x.a].classList.add("correct");
+
+ if(n===x.a){
+
+   score++;
+
+   correct.push(x.t);
+
+   document
+   .getElementById("feedback")
+   .textContent=
+   "✅ Correct! "+x.e;
+
+ }else{
+
+   b.classList.add("wrong");
+
+   wrong.push(x.t);
+
+   document
+   .getElementById("feedback")
+   .textContent=
+   "❌ Incorrect. "+x.e;
+
+ }
+
+ const next=
+ document.getElementById("next");
+
+ next.textContent=
+ i===questions.length-1
+ ?"See Analysis →"
+ :"Next Question →";
+
+ next.classList.remove("hidden");
+
+}
+
+
+/* =========================================================
+   NEXT QUESTION
+========================================================= */
+
+function nextQuestion(){
+
+ i++;
+
+ if(i<questions.length){
+
+   render();
+
+ }else{
+
+   finish();
+
+ }
+
+}
+
+
+/* =========================================================
+   UNIQUE VALUES
+========================================================= */
+
+function uniq(a){
+
+ return [...new Set(a)];
+
+}
+
+
+/* =========================================================
+   SAVE ONLINE
+========================================================= */
+
+async function saveOnline(result){
+
+ if(!SUPABASE_URL || !SUPABASE_KEY){
+
+   return false;
+
+ }
+
+ try{
+
+   const r=await fetch(
+     SUPABASE_URL+
+     "/rest/v1/quiz_results",
+     {
+       method:"POST",
+
+       headers:{
+         "Content-Type":"application/json",
+         "apikey":SUPABASE_KEY,
+         "Authorization":
+         "Bearer "+SUPABASE_KEY,
+         "Prefer":"return=minimal"
+       },
+
+       body:JSON.stringify(result)
+
+     }
+   );
+
+   return r.ok;
+
+ }catch(e){
+
+   console.log("Online save error:",e);
+
+   return false;
+
+ }
+
+}
+
+
+/* =========================================================
+   FINISH
+========================================================= */
+
+async function finish(){
+
+ const pct=
+ Math.round(
+   score/questions.length*100
+ );
+
+ const strengths=
+ uniq(correct);
+
+ const weaknesses=
+ uniq(wrong);
+
+ const improvement=
+ weaknesses.length
+
+ ? `Practice more questions on ${weaknesses.join(", ")} and review the explanations.`
+
+ : "Excellent work! Try a harder quiz to identify your next area for improvement.";
+
+
+ document
+ .getElementById("child")
+ .textContent=
+ `Child: ${name}`;
+
+
+ document
+ .getElementById("score")
+ .textContent=
+ `${score} / ${questions.length}`;
+
+
+ document
+ .getElementById("summary")
+ .textContent=
+ `Percentage: ${pct}%`;
+
+
+ document
+ .getElementById("strengths")
+ .textContent=
+ strengths.length
+ ? strengths.join(" • ")
+ : "Keep practicing all areas.";
+
+
+ document
+ .getElementById("weaknesses")
+ .textContent=
+ weaknesses.length
+ ? weaknesses.join(" • ")
+ : "No major weakness detected in this quiz.";
+
+
+ document
+ .getElementById("improvement")
+ .textContent=
+ improvement;
+
+
+ show("result");
+
+
+ document
+ .getElementById("saveStatus")
+ .textContent=
+ "⏳ Saving result...";
+
+
+ const saved=
+ await saveOnline({
+
+   child_name:name,
+
+   quiz_name:
+   "Simple Present Tense",
+
+   score:score,
+
+   total:questions.length,
+
+   percentage:pct,
+
+   strengths:
+   strengths.join(", "),
+
+   weaknesses:
+   weaknesses.join(", "),
+
+   improvement:
+   improvement
+
+ });
+
+
+ document
+ .getElementById("saveStatus")
+ .textContent=
+
+ saved
+
+ ? "☁️ Result saved online successfully."
+
+ : "📱 Result shown here. Online storage is not configured yet.";
+
+}
+
+
+/* =========================================================
+   RESTART
+========================================================= */
+
+function restartQuiz(){
+
+ document
+ .getElementById("name")
+ .value=name;
+
+ show("start");
+
+}
+
+</script>
+
+</body>
+</html>
