@@ -318,45 +318,185 @@ const SUPABASE_KEY="sb_publishable_euBKMDH0SQ6DUnWxti0P1g_1sg1Fzvp";
 
 const questions=[
 
-{q:"I ___ to school every day.",o:["goes","going","go","gone"],a:2,t:"I/You/We/They",e:"With I, use the base verb: go."},
+{
+id:"Q001",
+q:"I ___ to school every day.",
+o:["goes","going","go","gone"],
+a:2,
+t:"I/You/We/They",
+e:"With I, use the base verb: go."
+},
 
-{q:"She ___ English very well.",o:["speaks","speak","speaking","spoken"],a:0,t:"He/She/It",e:"She is singular, so use speaks."},
+{
+id:"Q002",
+q:"She ___ English very well.",
+o:["speaks","speak","speaking","spoken"],
+a:0,
+t:"He/She/It",
+e:"She is singular, so use speaks."
+},
 
-{q:"They ___ cricket on Sundays.",o:["plays","playing","played","play"],a:3,t:"I/You/We/They",e:"They takes the base verb: play."},
+{
+id:"Q003",
+q:"They ___ cricket on Sundays.",
+o:["plays","playing","played","play"],
+a:3,
+t:"I/You/We/They",
+e:"They takes the base verb: play."
+},
 
-{q:"My brother ___ TV in the evening.",o:["watch","watched","watches","watching"],a:2,t:"He/She/It",e:"My brother is singular: watches."},
+{
+id:"Q004",
+q:"My brother ___ TV in the evening.",
+o:["watch","watched","watches","watching"],
+a:2,
+t:"He/She/It",
+e:"My brother is singular: watches."
+},
 
-{q:"Everyone ___ a different opinion.",o:["has","have","having","are"],a:0,t:"Singular subjects",e:"Everyone is grammatically singular: has."},
+{
+id:"Q005",
+q:"Everyone ___ a different opinion.",
+o:["has","have","having","are"],
+a:0,
+t:"Singular subjects",
+e:"Everyone is grammatically singular: has."
+},
 
-{q:"We ___ our homework regularly.",o:["does","doing","do","done"],a:2,t:"I/You/We/They",e:"We takes the base verb: do."},
+{
+id:"Q006",
+q:"We ___ our homework regularly.",
+o:["does","doing","do","done"],
+a:2,
+t:"I/You/We/They",
+e:"We takes the base verb: do."
+},
 
-{q:"The dog ___ loudly at night.",o:["bark","barking","barked","barks"],a:3,t:"He/She/It",e:"The dog is singular: barks."},
+{
+id:"Q007",
+q:"The dog ___ loudly at night.",
+o:["bark","barking","barked","barks"],
+a:3,
+t:"He/She/It",
+e:"The dog is singular: barks."
+},
 
-{q:"You ___ very fast.",o:["run","runs","running","ran"],a:0,t:"I/You/We/They",e:"You takes the base verb: run."},
+{
+id:"Q008",
+q:"You ___ very fast.",
+o:["run","runs","running","ran"],
+a:0,
+t:"I/You/We/They",
+e:"You takes the base verb: run."
+},
 
-{q:"My mother ___ delicious food.",o:["cooks","cook","cooking","cooked"],a:0,t:"He/She/It",e:"My mother is singular: cooks."},
+{
+id:"Q009",
+q:"My mother ___ delicious food.",
+o:["cooks","cook","cooking","cooked"],
+a:0,
+t:"He/She/It",
+e:"My mother is singular: cooks."
+},
 
-{q:"The sun ___ in the east.",o:["rise","rising","rises","rose"],a:2,t:"General facts",e:"General facts use simple present: rises."},
+{
+id:"Q010",
+q:"The sun ___ in the east.",
+o:["rise","rising","rises","rose"],
+a:2,
+t:"General facts",
+e:"General facts use simple present: rises."
+},
 
-{q:"He ___ his teeth every morning.",o:["brushes","brush","brushing","brushed"],a:0,t:"He/She/It",e:"He is singular; brush becomes brushes."},
+{
+id:"Q011",
+q:"He ___ his teeth every morning.",
+o:["brushes","brush","brushing","brushed"],
+a:0,
+t:"He/She/It",
+e:"He is singular; brush becomes brushes."
+},
 
-{q:"Each student ___ a book.",o:["have","has","having","are"],a:1,t:"Singular subjects",e:"Each is singular: has."},
+{
+id:"Q012",
+q:"Each student ___ a book.",
+o:["have","has","having","are"],
+a:1,
+t:"Singular subjects",
+e:"Each is singular: has."
+},
 
-{q:"Nobody ___ the answer.",o:["knows","know","knowing","are"],a:0,t:"Singular subjects",e:"Nobody is singular: knows."},
+{
+id:"Q013",
+q:"Nobody ___ the answer.",
+o:["knows","know","knowing","are"],
+a:0,
+t:"Singular subjects",
+e:"Nobody is singular: knows."
+},
 
-{q:"My friends ___ near my house.",o:["lives","live","living","lived"],a:1,t:"I/You/We/They",e:"Friends is plural: live."},
+{
+id:"Q014",
+q:"My friends ___ near my house.",
+o:["lives","live","living","lived"],
+a:1,
+t:"I/You/We/They",
+e:"Friends is plural: live."
+},
 
-{q:"Does she ___ coffee?",o:["likes","like","liking","liked"],a:1,t:"Do/Does questions",e:"After does, use the base verb: like."},
+{
+id:"Q015",
+q:"Does she ___ coffee?",
+o:["likes","like","liking","liked"],
+a:1,
+t:"Do/Does questions",
+e:"After does, use the base verb: like."
+},
 
-{q:"He ___ not play football.",o:["do","does","is","are"],a:1,t:"Do/Does negatives",e:"Use does + not + base verb."},
+{
+id:"Q016",
+q:"He ___ not play football.",
+o:["do","does","is","are"],
+a:1,
+t:"Do/Does negatives",
+e:"Use does + not + base verb."
+},
 
-{q:"I ___ not watch TV every day.",o:["does","do","am","is"],a:1,t:"Do/Does negatives",e:"With I, use do + not + base verb."},
+{
+id:"Q017",
+q:"I ___ not watch TV every day.",
+o:["does","do","am","is"],
+a:1,
+t:"Do/Does negatives",
+e:"With I, use do + not + base verb."
+},
 
-{q:"___ they play cricket?",o:["Does","Do","Is","Are"],a:1,t:"Do/Does questions",e:"With they, use Do."},
+{
+id:"Q018",
+q:"___ they play cricket?",
+o:["Does","Do","Is","Are"],
+a:1,
+t:"Do/Does questions",
+e:"With they, use Do."
+},
 
-{q:"___ your sister work here?",o:["Do","Does","Are","Is"],a:1,t:"Do/Does questions",e:"Your sister is singular, so use Does."},
+{
+id:"Q019",
+q:"___ your sister work here?",
+o:["Do","Does","Are","Is"],
+a:1,
+t:"Do/Does questions",
+e:"Your sister is singular, so use Does."
+},
 
-{q:"Water ___ at 100°C.",o:["boils","boil","boiling","boiled"],a:0,t:"General facts",e:"General facts use simple present: boils."}
+{
+id:"Q020",
+q:"Water ___ at 100°C.",
+o:["boils","boil","boiling","boiled"],
+a:0,
+t:"General facts",
+e:"General facts use simple present: boils."
+}
 
 ];
 
