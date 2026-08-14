@@ -205,8 +205,60 @@ Simple Present Tense • Adaptive Practice
 
 
 <!-- START -->
+<!-- LOGIN -->
 
-<section id="start" class="card">
+<section id="login" class="card">
+
+<div class="badge">
+QuizHub • Login
+</div>
+
+<h2>Parent / Student Login</h2>
+
+<p class="small">
+Log in to save quiz progress and get personalized questions.
+</p>
+
+<label for="email">
+Email
+</label>
+
+<input
+ id="email"
+ type="email"
+ placeholder="Enter email"
+ autocomplete="email"
+>
+
+<label for="password">
+Password
+</label>
+
+<input
+ id="password"
+ type="password"
+ placeholder="Enter password"
+ autocomplete="current-password"
+>
+
+<button
+ id="loginButton"
+ onclick="loginUser()">
+Log In →
+</button>
+
+<div
+ class="status"
+ id="loginStatus">
+Enter your email and password.
+</div>
+
+</section>
+
+
+<!-- START -->
+
+<section id="start" class="card hidden">
 
 <div class="badge">
 V6 • Adaptive Learning
@@ -238,8 +290,15 @@ Start Quiz →
 <div
  class="status"
  id="connection">
-⏳ Connecting...
+⏳ Checking account...
 </div>
+
+<br>
+
+<button
+ onclick="logoutUser()">
+Log Out
+</button>
 
 </section>
 
@@ -652,6 +711,131 @@ function show(id){
 /* =========================================================
    LOAD CURRENT USER
 ========================================================= */
+
+async function loginUser(){
+
+  const email =
+    document
+    .getElementById("email")
+    .value
+    .trim();
+
+  const password =
+    document
+    .getElementById("password")
+    .value;
+
+  const status =
+    document
+    .getElementById("loginStatus");
+
+  const button =
+    document
+    .getElementById("loginButton");
+
+
+  if(!email || !password){
+
+    status.textContent =
+      "⚠️ Enter both email and password.";
+
+    return;
+
+  }
+
+
+  button.disabled = true;
+
+  button.textContent =
+    "Logging in...";
+
+  status.textContent =
+    "⏳ Checking account...";
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+    await supabaseClient.auth.signInWithPassword({
+      email:email,
+      password:password
+    });
+
+
+    if(error){
+
+      console.log(
+        "Login error:",
+        error
+      );
+
+      status.textContent =
+        "❌ " + error.message;
+
+      button.disabled = false;
+
+      button.textContent =
+        "Log In →";
+
+      return;
+
+    }
+
+
+    currentUser =
+      data.user;
+
+
+    status.textContent =
+      "✅ Login successful.";
+
+
+    document
+    .getElementById("connection")
+    .textContent =
+      "☁️ Connected • User account ready";
+
+
+    show("start");
+
+
+  }catch(error){
+
+    console.log(
+      "Login error:",
+      error
+    );
+
+    status.textContent =
+      "❌ Login failed.";
+
+  }
+
+
+  button.disabled = false;
+
+  button.textContent =
+    "Log In →";
+
+}
+
+async function logoutUser(){
+
+  await supabaseClient.auth.signOut();
+
+  currentUser = null;
+
+  show("login");
+
+  document
+  .getElementById("loginStatus")
+  .textContent =
+  "You have been logged out.";
+
+}
 
 async function loadCurrentUser(){
 
