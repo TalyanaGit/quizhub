@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QuizHub Dashboard</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f4f7fb;
+ color:#172033
+}
+
+.wrap{
+ max-width:900px;
+ margin:auto;
+ padding:18px
+}
+
+h1{
+ margin:8px 0
+}
+
+.sub{
+ color:#667085;
+ margin-bottom:20px
+}
+
+.card{
+ background:#fff;
+ border-radius:18px;
+ padding:20px;
+ margin:15px 0;
+ box-shadow:0 8px 25px #0001
+}
+
+.stats{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:12px
+}
+
+.stat{
+ background:#f8fafc;
+ padding:15px;
+ border-radius:14px;
+ text-align:center
+}
+
+.stat b{
+ display:block;
+ font-size:25px
+}
+
+.table-wrap{
+ overflow-x:auto
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ min-width:700px
+}
+
+th,td{
+ padding:12px;
+ border-bottom:1px solid #e5e7eb;
+ text-align:left;
+ font-size:14px
+}
+
+th{
+ background:#f8fafc
+}
+
+.status{
+ padding:12px;
+ border-radius:10px;
+ background:#f8fafc;
+ margin-bottom:15px
+}
+
+button{
+ border:0;
+ border-radius:10px;
+ padding:12px 16px;
+ background:#4f46e5;
+ color:white;
+ font-weight:700;
+ font:inherit
+}
+
+@media(max-width:600px){
+ .stats{
+   grid-template-columns:1fr
+ }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<h1>📊 QuizHub Dashboard</h1>
+
+<div class="sub">
+Parent / Teacher Result Dashboard
+</div>
+
+<div class="card">
+
+<div class="stats">
+
+<div class="stat">
+<b id="totalResults">0</b>
+Total Results
+</div>
+
+<div class="stat">
+<b id="averageScore">0%</b>
+Average Score
+</div>
+
+<div class="stat">
+<b id="bestScore">0%</b>
+Best Score
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<button onclick="loadResults()">🔄 Refresh Results</button>
+
+<div class="status" id="status">
+Loading results...
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Child</th>
+<th>Quiz</th>
+<th>Score</th>
+<th>Percentage</th>
+<th>Date & Time</th>
+</tr>
+</thead>
+
+<tbody id="results"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL="https://sfevtelcfyhhizklevyo.supabase.co";
+
+const SUPABASE_KEY="sb_publishable_euBKMDH0SQ6DUnWxti0P1g_1sg1Fzvp";
+
+
+async function loadResults(){
+
+ const status=
+ document.getElementById("status");
+
+ status.textContent=
+ "Loading results...";
+
+ try{
+
+   const response=
+   await fetch(
+     SUPABASE_URL+
+     "/rest/v1/quiz_results?select=*&order=created_at.desc",
+     {
+       headers:{
+         "apikey":SUPABASE_KEY,
+         "Authorization":
+         "Bearer "+SUPABASE_KEY
+       }
+     }
+   );
+
+   if(!response.ok){
+
+     throw new Error(
+       "Could not load results"
+     );
+
+   }
+
+   const data=
+   await response.json();
+
+   displayResults(data);
+
+ }catch(error){
+
+   console.error(error);
+
+   status.textContent=
+   "❌ Could not load results.";
+
+ }
+
+}
+
+
+function displayResults(data){
+
+ const tbody=
+ document.getElementById("results");
+
+ tbody.innerHTML="";
+
+ document.getElementById("totalResults")
+ .textContent=data.length;
+
+ if(data.length===0){
+
+   document.getElementById("status")
+   .textContent=
+   "No quiz results found.";
+
+   return;
+
+ }
+
+ let total=0;
+ let best=0;
+
+ data.forEach(row=>{
+
+   const tr=
+   document.createElement("tr");
+
+   const date=
+   row.created_at
+   ?new Date(row.created_at)
+   .toLocaleString()
+   :"";
+
+   tr.innerHTML=`
+
+   <td>${escapeHtml(row.child_name||"")}</td>
+
+   <td>${escapeHtml(row.quiz_name||"")}</td>
+
+   <td>${row.score||0}/${row.total||0}</td>
+
+   <td>${row.percentage||0}%</td>
+
+   <td>${date}</td>
+
+   `;
+
+   tbody.appendChild(tr);
+
+   total+=Number(row.percentage||0);
+
+   best=
+   Math.max(
+     best,
+     Number(row.percentage||0)
+   );
+
+ });
+
+ const average=
+ Math.round(total/data.length);
+
+ document.getElementById("averageScore")
+ .textContent=average+"%";
+
+ document.getElementById("bestScore")
+ .textContent=best+"%";
+
+ document.getElementById("status")
+ .textContent=
+ "☁️ Results loaded successfully.";
+
+}
+
+
+function escapeHtml(value){
+
+ return String(value)
+ .replace(/&/g,"&amp;")
+ .replace(/</g,"&lt;")
+ .replace(/>/g,"&gt;")
+ .replace(/"/g,"&quot;")
+ .replace(/'/g,"&#039;");
+
+}
+
+
+loadResults();
+
+</script>
+
+</body>
+</html>
