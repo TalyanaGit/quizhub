@@ -1375,250 +1375,236 @@ async function answer(n,b){
    SAVE / UPDATE QUESTION PROGRESS
 ========================================================= */
 
-async function saveQuestionProgress(
- question,
- isCorrect
-){
+async function saveQuestionProgress(question, isCorrect){
 
- if(!currentUser){
+  if(!currentUser){
 
-   console.log(
-     "No logged-in user."
-   );
+    console.log("No logged-in user. Progress not saved.");
 
-   return;
+    return;
 
- }
+  }
 
+  try{
 
- try{
+    /*
+      First check whether this user has already
+      attempted this question.
+    */
 
-   /*
-      First find the existing progress row.
-   */
+    const checkResponse = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/user_question_progress" +
+      "?user_id=eq." +
+      encodeURIComponent(currentUser.id) +
+      "&question_id=eq." +
+      encodeURIComponent(question.id) +
+      "&select=*",
+      {
+        method:"GET",
 
-   const {
-     data,
-     error
-   } = await supabaseClient
+        headers:{
+          "apikey":SUPABASE_KEY,
+          "Authorization":
+            "Bearer " + SUPABASE_KEY
+        }
+      }
+    );
 
-     .from("user_question_progress")
 
-     .select(
-       "id,attempts,mistakes,consecutive_correct,mastered"
-     )
+    if(!checkResponse.ok){
 
-     .eq(
-       "user_id",
-       currentUser.id
-     )
+      console.log(
+        "Progress lookup failed:",
+        await checkResponse.text()
+      );
 
-     .eq(
-       "question_id",
-       question.db_id
-     )
+      return;
 
-     .maybeSingle();
+    }
 
 
-   if(error){
+    const rows =
+      await checkResponse.json();
 
-     console.log(
-       "Progress lookup error:",
-       error
-     );
 
-     return;
+    /*
+      EXISTING RECORD
+    */
 
-   }
+    if(rows.length > 0){
 
+      const old = rows[0];
 
-   let attempts = 1;
 
-   let mistakes = 0;
+      const attempts =
+        old.attempts + 1;
 
-   let consecutiveCorrect = 0;
 
-   let mastered = false;
+      const mistakes =
+        old.mistakes +
+        (isCorrect ? 0 : 1);
 
 
-   /*
-      Existing record
-   */
+      const consecutiveCorrect =
+        isCorrect
+        ? old.consecutive_correct + 1
+        : 0;
 
-   if(data){
 
-     attempts =
-     (data.attempts || 0) + 1;
+      /*
+        3 consecutive correct answers
+        means the question is mastered.
+      */
 
+      const mastered =
+        consecutiveCorrect >= 3;
 
-     mistakes =
-     (data.mistakes || 0)
-     + (isCorrect ? 0 : 1);
 
+      const updateResponse = await fetch(
+        SUPABASE_URL +
+        "/rest/v1/user_question_progress" +
+        "?id=eq." +
+        encodeURIComponent(old.id),
+        {
+          method:"PATCH",
 
-     if(isCorrect){
+          headers:{
+            "Content-Type":
+              "application/json",
 
-       consecutiveCorrect =
-       (data.consecutive_correct || 0)
-       + 1;
+            "apikey":
+              SUPABASE_KEY,
 
-     }else{
+            "Authorization":
+              "Bearer " + SUPABASE_KEY,
 
-       consecutiveCorrect = 0;
+            "Prefer":
+              "return=minimal"
+          },
 
-     }
+          body:JSON.stringify({
 
+            attempts:attempts,
 
-     mastered =
-     consecutiveCorrect >=
-     MASTER_THRESHOLD;
+            mistakes:mistakes,
 
-   }
+            consecutive_correct:
+              consecutiveCorrect,
 
+            mastered:mastered,
 
-   /*
-      New record
-   */
+            last_attempt:
+              new Date().toISOString()
 
-   else{
+          })
+        }
+      );
 
-     attempts = 1;
 
-     mistakes =
-     isCorrect ? 0 : 1;
+      if(!updateResponse.ok){
 
-     consecutiveCorrect =
-     isCorrect ? 1 : 0;
+        console.log(
+          "Progress update failed:",
+          await updateResponse.text()
+        );
 
-     mastered =
-     consecutiveCorrect >=
-     MASTER_THRESHOLD;
+      }else{
 
-   }
+        console.log(
+          "Progress updated:",
+          question.id,
+          {
+            attempts,
+            mistakes,
+            consecutiveCorrect,
+            mastered
+          }
+        );
 
+      }
 
-   const updateData = {
 
-     user_id:
-     currentUser.id,
+    /*
+      NEW RECORD
+    */
 
-     question_id:
-     question.db_id,
+    }else{
 
-     attempts:
-     attempts,
+      const response =
+        await fetch(
+          SUPABASE_URL +
+          "/rest/v1/user_question_progress",
+          {
+            method:"POST",
 
-     mistakes:
-     mistakes,
+            headers:{
+              "Content-Type":
+                "application/json",
 
-     consecutive_correct:
-     consecutiveCorrect,
+              "apikey":
+                SUPABASE_KEY,
 
-     mastered:
-     mastered,
+              "Authorization":
+                "Bearer " + SUPABASE_KEY,
 
-     last_attempt:
-     new Date().toISOString()
+              "Prefer":
+                "return=minimal"
+            },
 
-   };
+            body:JSON.stringify({
 
+              user_id:
+                currentUser.id,
 
-   /*
-      Update existing row
-   */
+              question_id:
+                question.id,
 
-   if(data){
+              attempts:1,
 
-     const {
-       error:updateError
-     } = await supabaseClient
+              mistakes:
+                isCorrect ? 0 : 1,
 
-       .from("user_question_progress")
+              consecutive_correct:
+                isCorrect ? 1 : 0,
 
-       .update(updateData)
+              mastered:
+                false,
 
-       .eq(
-         "id",
-         data.id
-       );
+              last_attempt:
+                new Date().toISOString()
 
+            })
+          }
+        );
 
-     if(updateError){
 
-       console.log(
-         "Progress update error:",
-         updateError
-       );
+      if(!response.ok){
 
-     }
+        console.log(
+          "Progress insert failed:",
+          await response.text()
+        );
 
-   }
+      }else{
 
+        console.log(
+          "New progress saved:",
+          question.id
+        );
 
-   /*
-      Insert new row
-   */
+      }
 
-   else{
+    }
 
-     const {
-       error:insertError
-     } = await supabaseClient
+  }catch(error){
 
-       .from("user_question_progress")
+    console.log(
+      "Progress save error:",
+      error
+    );
 
-       .insert(updateData);
-
-
-     if(insertError){
-
-       console.log(
-         "Progress insert error:",
-         insertError
-       );
-
-     }
-
-   }
-
-
-   /*
-      Update local progress cache too.
-   */
-
-   progressMap[question.db_id] = {
-
-     attempts:
-     attempts,
-
-     mistakes:
-     mistakes,
-
-     consecutive_correct:
-     consecutiveCorrect,
-
-     mastered:
-     mastered
-
-   };
-
-
-   console.log(
-     "Question progress:",
-     question.id,
-     updateData
-   );
-
-
- }catch(error){
-
-   console.log(
-     "Progress save error:",
-     error
-   );
-
- }
+  }
 
 }
 
