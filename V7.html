@@ -620,7 +620,7 @@ const rules = [
 // Space Theme Ranks
 const RANKS = ['Cadet', 'Explorer', 'Navigator', 'Pilot', 'Ranger', 'Commander', 'Captain', 'Galaxy Master'];
 
-// 2. QUESTION BANK (With metadata, difficulty, hints, and error classification)
+// 2. QUESTION BANK
 const questions = [
   {
     id: 'q01', text: 'He ___ to school every day.', options: ['go','goes','going','went'], correct: 'goes',
@@ -821,7 +821,6 @@ function getQuestionState(id) {
   return state.q[id];
 }
 
-// Spaced repetition scheduler
 function updateSpacedRepetition(p, isCorrect) {
   const now = new Date();
   if (isCorrect) {
@@ -833,12 +832,11 @@ function updateSpacedRepetition(p, isCorrect) {
   } else {
     p.repLevel = Math.max(1, p.repLevel - 1);
     const nextDate = new Date();
-    nextDate.setDate(now.getDate() + 1); // review tomorrow on failure
+    nextDate.setDate(now.getDate() + 1);
     p.nextReview = nextDate.toISOString().slice(0,10);
   }
 }
 
-// Check rule-level mastery with difficulty coverage
 function ruleStats(ruleKey) {
   const qs = questions.filter(q => q.rule === ruleKey);
   let attempts = 0, mistakes = 0, attemptedQs = 0, recentConsecOk = 0, hasHardCleared = false;
@@ -862,17 +860,15 @@ function ruleStats(ruleKey) {
 
 function isRuleMastered(ruleKey) {
   const s = ruleStats(ruleKey);
-  // Breadth: >= 5 distinct Qs, Accuracy >= 85%, Streak consistency >= 3, and >= 1 Medium/Hard question cleared
   return s.attemptedQs >= 5 && s.accuracy >= 0.85 && s.recentConsecOk >= 3 && s.hasHardCleared;
 }
 
-// 4. ADAPTIVE QUEUE BUILDER (30% Review / 40% Weak / 30% New)
+// 4. ADAPTIVE QUEUE BUILDER
 function buildDailyMissionQueue(focusRule = null) {
   const todayStr = new Date().toISOString().slice(0,10);
   let pool = focusRule ? questions.filter(q => q.rule === focusRule) : questions;
   
   if (focusRule) {
-    // Targeted Rule Practice Mode
     return [...pool].sort(() => Math.random() - 0.5).slice(0, 10);
   }
 
@@ -901,7 +897,6 @@ function buildDailyMissionQueue(focusRule = null) {
 
   let combined = [...pickedReview, ...pickedWeak, ...pickedNew];
   
-  // Fill remaining slots if pools had insufficient items
   if (combined.length < 10) {
     const remaining = shuffle(pool.filter(q => !combined.some(c => c.id === q.id)));
     combined = combined.concat(remaining.slice(0, 10 - combined.length));
@@ -943,7 +938,7 @@ function updateStreak() {
     if (diffDays === 1) {
       state.streak += 1;
     } else if (diffDays > 1) {
-      state.streak = 1; // Non-punitive reset
+      state.streak = 1;
     }
     state.lastPracticeDate = todayStr;
   }
@@ -1055,7 +1050,13 @@ function renderQuestion() {
   $('feedbackText').className = 'feedback-box';
   $('rulebookBox').classList.add('hidden');
 
-  // Render options (English only)
+  // Reset submit button state
+  const submitBtn = $('submitBtn');
+  submitBtn.textContent = pos === queue.length - 1 ? 'SUBMIT & FINISH 🚀' : 'SUBMIT ANSWER →';
+  submitBtn.style.background = '';
+  submitBtn.onclick = evaluateAnswer;
+
+  // Render options
   $('answersGrid').innerHTML = [...q.options].sort(() => Math.random() - 0.5).map(opt =>
     `<button class="answer-btn" data-v="${opt.replace(/"/g, '&quot;')}">${opt}</button>`
   ).join('');
@@ -1068,8 +1069,6 @@ function renderQuestion() {
       selectedOption = btn.dataset.v;
     };
   });
-
-  $('submitBtn').textContent = pos === queue.length - 1 ? 'SUBMIT & FINISH 🚀' : 'SUBMIT ANSWER →';
 }
 
 function triggerHint() {
@@ -1135,7 +1134,7 @@ function evaluateAnswer() {
       pos++;
       if (pos >= queue.length) finishQuiz();
       else renderQuestion();
-    }, 500);
+    }, 450);
   } else {
     wrongCount++;
     p.mistakes++;
@@ -1151,7 +1150,7 @@ function evaluateAnswer() {
     const ruleInfo = rules.find(r => r[0] === q.rule);
     const explanation = ruleInfo ? ruleInfo[2] : '';
     $('feedbackText').className = 'feedback-box feedback-wrong';
-    $('feedbackText').innerHTML = `❌ Answer: <b>${q.correct}</b><br><span style="font-size:13px">${explanation}</span>`;
+    $('feedbackText').innerHTML = `❌ Correct Answer: <b>${q.correct}</b><br><span style="font-size:13px">${explanation}</span>`;
 
     // Interleave Retry: insert 2-3 questions down if under 3 appearances
     const appearances = sessionSeenCount[q.id] || 1;
@@ -1161,11 +1160,16 @@ function evaluateAnswer() {
       queue.splice(insertAt, 0, q);
     }
 
-    setTimeout(() => {
+    // Approach 1: Transform primary button into acknowledgment trigger (No auto-advance)
+    const submitBtn = $('submitBtn');
+    submitBtn.textContent = 'I UNDERSTAND / GOT IT! →';
+    submitBtn.style.background = 'var(--neon-pink)';
+    
+    submitBtn.onclick = () => {
       pos++;
       if (pos >= queue.length) finishQuiz();
       else renderQuestion();
-    }, 2000);
+    };
   }
 }
 
