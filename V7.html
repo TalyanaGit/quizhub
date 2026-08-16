@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Grammar Quest V8 — Supabase Edition</title>
-<!-- Official Supabase JS SDK -->
+<title>Grammar Quest V8 — Full Auth & Engine</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -95,7 +94,7 @@ body{
   align-items:center;
 }
 
-/* Scene */
+/* Scene Banner */
 .scene-container{
   position:relative;
   width:100%;
@@ -113,7 +112,7 @@ body{
   pointer-events:none;
 }
 
-/* Signboard */
+/* Mission Sign */
 .wood-sign-wrap{
   position:relative;
   margin:-42px 18px 16px;
@@ -283,7 +282,7 @@ button{font:inherit}
 .stat-card{background:var(--parchment);border:2px solid var(--parchment-border);border-radius:14px;padding:12px;text-align:center}
 .stat-card b{font-size:20px;display:block;color:var(--green-deep)}
 
-/* Mission Box */
+/* Daily Mission Box */
 .mission-box{
   background:linear-gradient(135deg, #241c5c 0%, #151033 100%);
   border:2px solid var(--neon-purple);
@@ -459,7 +458,6 @@ button{font:inherit}
         <g transform="translate(475,55)">
           <circle cx="0" cy="0" r="26" fill="#3ec9d6"/>
         </g>
-        <!-- Character -->
         <g transform="translate(210,55)">
           <ellipse cx="45" cy="110" rx="34" ry="42" fill="#3ec9d6"/>
           <circle cx="45" cy="42" r="36" fill="#241c5c"/>
@@ -490,7 +488,105 @@ button{font:inherit}
           <label for="pin">SECRET 4–6 DIGIT PIN</label>
           <input class="quest-input" id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••">
         </div>
-        <button class="btn-cta" id="loginBtn" type="button">START MY JOURNEY 🚀</button>
+        <button class="btn-cta" id="loginBtn" type="button">LOGIN TO MISSION 🚀</button>
+        <div class="card-links">
+          <button class="text-link" id="forgotBtn" type="button">Forgot PIN?</button>
+          <button class="text-link" id="gotoSignupBtn" type="button">New Cadet? Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1B. SIGNUP SCREEN -->
+  <section id="signupScreen" class="hidden">
+    <div class="scene-container">
+      <svg class="scene-svg" viewBox="0 0 540 210" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#ffcc33">
+          <polygon points="60,30 63,38 71,38 64,43 67,51 60,46 53,51 56,43 49,38 57,38"/>
+          <polygon points="300,20 302,26 308,26 303,29 305,35 300,31 295,35 297,29 292,26 298,26"/>
+        </g>
+        <g transform="translate(210,55)">
+          <ellipse cx="45" cy="110" rx="34" ry="42" fill="#3ec9d6"/>
+          <circle cx="45" cy="42" r="36" fill="#241c5c"/>
+          <circle cx="45" cy="42" r="30" fill="#150f3d"/>
+          <ellipse cx="47" cy="46" rx="21" ry="17" fill="#3ec9d6"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="wood-sign-wrap">
+      <div class="wood-sign">
+        <div class="sign-small">ACADEMY ENROLLMENT</div>
+        <div class="sign-title">Join the Crew!</div>
+        <div class="sign-sub">Create your explorer profile & secure PIN.</div>
+      </div>
+    </div>
+
+    <div class="content-body">
+      <div class="quest-card">
+        <div class="quest-card-title">⭐ New Explorer Sign Up</div>
+        <div class="form-group">
+          <label for="su_username">CHOOSE USERNAME</label>
+          <input class="quest-input" id="su_username" type="text" placeholder="e.g. Arya">
+        </div>
+        <div class="form-group">
+          <label for="su_parent_email">PARENT RECOVERY EMAIL</label>
+          <input class="quest-input" id="su_parent_email" type="email" placeholder="parent@example.com">
+        </div>
+        <div class="form-group">
+          <label for="su_pin">CREATE 4–6 DIGIT PIN</label>
+          <input class="quest-input" id="su_pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••">
+        </div>
+        <button class="btn-cta" id="signupBtn" type="button">CREATE CADET SUIT ⭐</button>
+        <div class="card-links" style="justify-content:center">
+          <button class="text-link" id="backToLoginFromSu" type="button">← Already have a profile? Log In</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1C. FORGOT PIN / RESET SCREEN -->
+  <section id="forgotScreen" class="hidden">
+    <div class="scene-container">
+      <svg class="scene-svg" viewBox="0 0 540 210" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#ffcc33">
+          <polygon points="120,40 123,48 131,48 124,53 127,61 120,56 113,61 116,53 109,48 117,48"/>
+        </g>
+        <g transform="translate(210,55)">
+          <ellipse cx="45" cy="110" rx="34" ry="42" fill="#3ec9d6"/>
+          <circle cx="45" cy="42" r="36" fill="#241c5c"/>
+          <circle cx="45" cy="42" r="30" fill="#150f3d"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="wood-sign-wrap">
+      <div class="wood-sign">
+        <div class="sign-small">MISSION RECOVERY</div>
+        <div class="sign-title">Reset PIN</div>
+        <div class="sign-sub">Recover your suit access via parent email.</div>
+      </div>
+    </div>
+
+    <div class="content-body">
+      <div class="quest-card">
+        <div class="quest-card-title">🔑 Explorer Security Recovery</div>
+        <div class="form-group">
+          <label for="fp_username">EXPLORER USERNAME</label>
+          <input class="quest-input" id="fp_username" type="text" placeholder="e.g. Arya">
+        </div>
+        <div class="form-group">
+          <label for="fp_parent_email">PARENT EMAIL (USED AT SIGNUP)</label>
+          <input class="quest-input" id="fp_parent_email" type="email" placeholder="parent@example.com">
+        </div>
+        <div class="form-group">
+          <label for="fp_new_pin">ENTER NEW 4–6 DIGIT PIN</label>
+          <input class="quest-input" id="fp_new_pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••">
+        </div>
+        <button class="btn-cta" id="resetPinBtn" type="button">UPDATE MISSION PIN 🔑</button>
+        <div class="card-links" style="justify-content:center">
+          <button class="text-link" id="backToLoginFromFp" type="button">← Back to Log In</button>
+        </div>
       </div>
     </div>
   </section>
@@ -640,7 +736,7 @@ const SUPABASE_URL = 'https://sfevtelcfyhhizklevyo.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmZXZ0ZWxjZnloaGl6a2xldnlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2ODg4NzEsImV4cCI6MjEwMjI2NDg3MX0.YvVRNWA_P4yz4rw9NWr-JN1iOTVcL4IUXp-wEnzRaNw';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// --- GRAMMAR QUEST ENGINE ---
+// --- RULES & RANKS ---
 const rules = [
   ['subject', 'I / You / We / They + base verb', 'With I, you, we, and they, keep the verb in base form.', 'I play cricket. • They read books.'],
   ['third', 'He / She / It + s / es', 'With he, she, and it, the verb needs an -s or -es suffix.', 'He plays. • She watches.'],
@@ -653,6 +749,17 @@ const rules = [
 
 const RANKS = ['Cadet', 'Explorer', 'Navigator', 'Pilot', 'Ranger', 'Commander', 'Captain', 'Galaxy Master'];
 const INTERVAL_SCHEDULE = [1, 3, 7, 14, 30];
+
+// Fallback questions in case of network issues
+const localFallbackQuestions = [
+  { id: 'q01', rule_key: 'subject', text: 'They ___ football on Sundays.', options: ['play', 'plays', 'playing', 'are play'], correct: 'play', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Look at the subject "They".', hint_2: 'Plural subjects do not add -s.', hint_3: 'Select "play".' },
+  { id: 'q05', rule_key: 'third', text: 'He ___ to school every day.', options: ['goes', 'go', 'going', 'is go'], correct: 'goes', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Subject is singular "He".', hint_2: 'He/She/It verbs end in -s or -es.', hint_3: 'Pick "goes".' },
+  { id: 'q09', rule_key: 'do', text: '___ she like mangoes?', options: ['Does', 'Do', 'Is', 'Did'], correct: 'Does', difficulty: 'easy', error_type: 'wrong_auxiliary', hint_1: 'Subject is "she".', hint_2: 'He/She/It takes "Does".', hint_3: 'Select "Does".' },
+  { id: 'q13', rule_key: 'negative', text: 'We ___ watch TV in the morning.', options: ["don't", "doesn't", "not", "no"], correct: "don't", difficulty: 'easy', error_type: 'wrong_negation', hint_1: 'Subject is "We".', hint_2: 'Plural takes don\'t.', hint_3: 'Select "don\'t".' },
+  { id: 'q17', rule_key: 'base', text: "Riya doesn't ___ coffee.", options: ['like', 'likes', 'liking', 'liked'], correct: 'like', difficulty: 'medium', error_type: 'verb_form_after_aux', hint_1: 'Notice "doesn\'t".', hint_2: 'After doesn\'t, verb stays base.', hint_3: 'Choose "like".' },
+  { id: 'q21', rule_key: 'spelling', text: 'He ___ TV every evening.', options: ['watches', 'watch', 'watchs', 'watching'], correct: 'watches', difficulty: 'easy', error_type: 'spelling_rule', hint_1: 'Verb ends in -ch.', hint_2: 'Add -es to verbs ending in -ch.', hint_3: 'Pick "watches".' },
+  { id: 'q26', rule_key: 'uses', text: 'The sun ___ in the east.', options: ['rises', 'rise', 'rising', 'rose'], correct: 'rises', difficulty: 'easy', error_type: 'universal_fact', hint_1: 'Permanent scientific fact.', hint_2: 'The sun is singular (It).', hint_3: 'Pick "rises".' }
+];
 
 class LearningEngine {
   constructor(userId) {
@@ -680,44 +787,48 @@ class LearningEngine {
   }
 
   async hydrate() {
-    // 1. Fetch Question Bank
-    const { data: qData, error: qErr } = await db.from('questions').select('*');
-    if (qErr) throw qErr;
-    this.questionBank = qData || [];
-
-    // 2. Fetch User Question Progress
-    const { data: pData, error: pErr } = await db.from('user_question_progress').select('*').eq('user_id', this.userId);
-    if (pErr) throw pErr;
-    this.userProgress = {};
-    (pData || []).forEach(row => { this.userProgress[row.question_id] = row; });
-
-    // 3. Fetch Historical Quiz Results
-    const { data: rData, error: rErr } = await db.from('user_quiz_results').select('*').eq('user_id', this.userId).order('local_date', { ascending: true });
-    if (rErr) throw rErr;
-    
-    this.dailyHistory = {};
-    (rData || []).forEach(r => {
-      if (!this.dailyHistory[r.local_date]) {
-        this.dailyHistory[r.local_date] = { attempts: 0, correct: 0 };
+    try {
+      const { data: qData, error: qErr } = await db.from('questions').select('*');
+      if (qErr || !qData || qData.length === 0) {
+        this.questionBank = localFallbackQuestions;
+      } else {
+        this.questionBank = qData;
       }
-      this.dailyHistory[r.local_date].attempts += r.total_questions;
-      this.dailyHistory[r.local_date].correct += r.correct_count;
-    });
-
-    // 4. Calculate Streak
-    const dates = Object.keys(this.dailyHistory).sort();
-    if (dates.length > 0) {
-      this.lastPracticeDate = dates[dates.length - 1];
-      let streakCount = 1;
-      for (let i = dates.length - 1; i > 0; i--) {
-        const curr = new Date(dates[i]);
-        const prev = new Date(dates[i - 1]);
-        const diff = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
-        if (diff === 1) streakCount++;
-        else break;
-      }
-      this.streak = streakCount;
+    } catch (e) {
+      this.questionBank = localFallbackQuestions;
     }
+
+    try {
+      const { data: pData } = await db.from('user_question_progress').select('*').eq('user_id', this.userId);
+      this.userProgress = {};
+      (pData || []).forEach(row => { this.userProgress[row.question_id] = row; });
+    } catch (e) {}
+
+    try {
+      const { data: rData } = await db.from('user_quiz_results').select('*').eq('user_id', this.userId).order('local_date', { ascending: true });
+      this.dailyHistory = {};
+      (rData || []).forEach(r => {
+        if (!this.dailyHistory[r.local_date]) {
+          this.dailyHistory[r.local_date] = { attempts: 0, correct: 0 };
+        }
+        this.dailyHistory[r.local_date].attempts += r.total_questions;
+        this.dailyHistory[r.local_date].correct += r.correct_count;
+      });
+
+      const dates = Object.keys(this.dailyHistory).sort();
+      if (dates.length > 0) {
+        this.lastPracticeDate = dates[dates.length - 1];
+        let streakCount = 1;
+        for (let i = dates.length - 1; i > 0; i--) {
+          const curr = new Date(dates[i]);
+          const prev = new Date(dates[i - 1]);
+          const diff = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
+          if (diff === 1) streakCount++;
+          else break;
+        }
+        this.streak = streakCount;
+      }
+    } catch (e) {}
   }
 
   getProgress(questionId) {
@@ -857,19 +968,20 @@ class LearningEngine {
       if (this.recentMistakes.length > 5) this.recentMistakes.pop();
     }
 
-    // Persist progress to Supabase
-    await db.from('user_question_progress').upsert({
-      user_id: this.userId,
-      question_id: question.id,
-      attempts: progress.attempts,
-      mistakes: progress.mistakes,
-      consecutive_correct: progress.consecutive_correct,
-      last_attempted: progress.last_attempted,
-      last_wrong: progress.last_wrong,
-      rep_level: progress.rep_level,
-      next_review_date: progress.next_review_date,
-      updated_at: nowIso
-    });
+    try {
+      await db.from('user_question_progress').upsert({
+        user_id: this.userId,
+        question_id: question.id,
+        attempts: progress.attempts,
+        mistakes: progress.mistakes,
+        consecutive_correct: progress.consecutive_correct,
+        last_attempted: progress.last_attempted,
+        last_wrong: progress.last_wrong,
+        rep_level: progress.rep_level,
+        next_review_date: progress.next_review_date,
+        updated_at: nowIso
+      });
+    } catch(e) {}
 
     return {
       isCorrect,
@@ -879,14 +991,16 @@ class LearningEngine {
 
   async logQuizResult(total, correct, wrong, errorSummary) {
     const today = this.getLocalDateString();
-    await db.from('user_quiz_results').insert({
-      user_id: this.userId,
-      local_date: today,
-      total_questions: total,
-      correct_count: correct,
-      wrong_count: wrong,
-      error_summary: errorSummary
-    });
+    try {
+      await db.from('user_quiz_results').insert({
+        user_id: this.userId,
+        local_date: today,
+        total_questions: total,
+        correct_count: correct,
+        wrong_count: wrong,
+        error_summary: errorSummary
+      });
+    } catch(e) {}
 
     if (!this.dailyHistory[today]) this.dailyHistory[today] = { attempts: 0, correct: 0 };
     this.dailyHistory[today].attempts += total;
@@ -911,7 +1025,7 @@ let errorSummary = {};
 const $ = id => document.getElementById(id);
 
 function showScreen(id) {
-  ['loginScreen', 'homeScreen', 'quizScreen', 'resultScreen', 'parentScreen'].forEach(s => $(s).classList.add('hidden'));
+  ['loginScreen', 'signupScreen', 'forgotScreen', 'homeScreen', 'quizScreen', 'resultScreen', 'parentScreen'].forEach(s => $(s).classList.add('hidden'));
   $(id).classList.remove('hidden');
   window.scrollTo(0, 0);
 }
@@ -951,7 +1065,7 @@ function renderDashboard() {
   $('todayAccuracy').textContent = (todayStats.attempts ? Math.round((todayStats.correct / todayStats.attempts) * 100) : 0) + '%';
   $('todayImproved').textContent = masteredCount;
 
-  // Interactive Map Cards
+  // Map Cards
   $('mapList').innerHTML = rules.map(r => {
     const s = engine.getRuleStats(r[0]);
     const mastered = engine.isRuleMastered(r[0]);
@@ -1106,7 +1220,6 @@ async function evaluateAnswer() {
       <div style="font-size:13px;line-height:1.4">${explanation}</div>
     `;
 
-    // Wrong-Answer Rescue Loop (interleave 2-3 questions ahead)
     if (sessionSeenCount[q.id] < 3) {
       const gap = 2 + Math.floor(Math.random() * 2);
       const insertAt = Math.min(pos + 1 + gap, queue.length);
@@ -1172,7 +1285,6 @@ function renderParentDashboard() {
   $('pQuestions').textContent = totalQ;
   $('pStreak').textContent = `${engine.streak} Days`;
 
-  // Weakest Skills
   const ruleRanked = rules.map(r => ({
     name: r[1],
     stats: engine.getRuleStats(r[0])
@@ -1191,7 +1303,6 @@ function renderParentDashboard() {
     `).join('');
   }
 
-  // Recent Mistakes
   if (!engine.recentMistakes || engine.recentMistakes.length === 0) {
     $('recentMistakesList').innerHTML = '<span style="font-size:12px;color:var(--text-muted)">No mistakes logged recently.</span>';
   } else {
@@ -1203,7 +1314,6 @@ function renderParentDashboard() {
     `).join('');
   }
 
-  // Learning Trend
   const historyKeys = Object.keys(engine.dailyHistory).sort().slice(-7);
   if (historyKeys.length === 0) {
     $('trendList').innerHTML = '<span style="font-size:12px;color:var(--text-muted)">Practice daily to generate accuracy trends.</span>';
@@ -1221,7 +1331,6 @@ function renderParentDashboard() {
     }).join('');
   }
 
-  // Rule Breakdown
   $('parentRulesList').innerHTML = rules.map(r => {
     const s = engine.getRuleStats(r[0]);
     const mastered = engine.isRuleMastered(r[0]);
@@ -1244,47 +1353,148 @@ function renderParentDashboard() {
   showScreen('parentScreen');
 }
 
-// --- EVENT HANDLERS ---
+// --- AUTHENTICATION FLOWS (LOGIN, SIGNUP, FORGOT PIN) ---
+
+// 1. Login Handler
 $('loginBtn').onclick = async () => {
   const username = $('username').value.trim().toLowerCase();
   const pin = $('pin').value.trim();
 
   if (!username || !/^[0-9]{4,6}$/.test(pin)) {
-    alert('Please enter a username and a 4–6 digit numeric PIN.');
+    alert('Please enter your explorer username and 4–6 digit numeric PIN.');
     return;
   }
 
-  // Generate deterministic Supabase auth credentials from username + PIN
   const email = `${username}@grammarquest.local`;
   const password = `GQ_${pin}_SECURE!`;
 
   $('loginBtn').disabled = true;
-  $('loginBtn').textContent = 'CONNECTING MISSION...';
+  $('loginBtn').textContent = 'VERIFYING CREDENTIALS...';
 
   try {
-    // 1. Try Signing In
-    let { data: authData, error: authError } = await db.auth.signInWithPassword({ email, password });
-    
-    // 2. If user doesn't exist, create the explorer account
-    if (authError) {
-      const { data: signUpData, error: signUpError } = await db.auth.signUp({ email, password });
-      if (signUpError) throw signUpError;
-      authData = signUpData;
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) {
+      alert('Login failed: Invalid Username or PIN. If this is your first time, please tap "New Cadet? Sign Up".');
+      return;
     }
 
-    const userId = authData.user.id;
-    engine = new LearningEngine(userId);
+    engine = new LearningEngine(data.user.id);
     await engine.hydrate();
-
     renderDashboard();
     showScreen('homeScreen');
   } catch (err) {
-    alert('Login error: ' + (err.message || 'Could not connect to Supabase.'));
+    alert('Network error during login: ' + err.message);
   } finally {
     $('loginBtn').disabled = false;
-    $('loginBtn').textContent = 'START MY JOURNEY 🚀';
+    $('loginBtn').textContent = 'LOGIN TO MISSION 🚀';
   }
 };
+
+// 2. Sign Up Handler
+$('signupBtn').onclick = async () => {
+  const username = $('su_username').value.trim().toLowerCase();
+  const parentEmail = $('su_parent_email').value.trim().toLowerCase();
+  const pin = $('su_pin').value.trim();
+
+  if (!username || !/^[a-zA-Z0-9_-]{3,15}$/.test(username)) {
+    alert('Please choose a username between 3 and 15 characters (letters/numbers).');
+    return;
+  }
+  if (!parentEmail || !parentEmail.includes('@') || !parentEmail.includes('.')) {
+    alert('Please provide a valid parent recovery email.');
+    return;
+  }
+  if (!/^[0-9]{4,6}$/.test(pin)) {
+    alert('PIN must be 4 to 6 numeric digits.');
+    return;
+  }
+
+  const authEmail = `${username}@grammarquest.local`;
+  const password = `GQ_${pin}_SECURE!`;
+
+  $('signupBtn').disabled = true;
+  $('signupBtn').textContent = 'CREATING SUIT...';
+
+  try {
+    const { data, error } = await db.auth.signUp({
+      email: authEmail,
+      password: password,
+      options: {
+        data: {
+          username: username,
+          parent_email: parentEmail
+        }
+      }
+    });
+
+    if (error) throw error;
+
+    alert('🎉 Cadet profile created successfully! Logging you in now...');
+    engine = new LearningEngine(data.user.id);
+    await engine.hydrate();
+    renderDashboard();
+    showScreen('homeScreen');
+  } catch (err) {
+    alert('Sign Up failed: ' + (err.message.includes('already registered') ? 'Username already taken. Please choose another.' : err.message));
+  } finally {
+    $('signupBtn').disabled = false;
+    $('signupBtn').textContent = 'CREATE CADET SUIT ⭐';
+  }
+};
+
+// 3. Reset / Forgot PIN Handler
+$('resetPinBtn').onclick = async () => {
+  const username = $('fp_username').value.trim().toLowerCase();
+  const parentEmail = $('fp_parent_email').value.trim().toLowerCase();
+  const newPin = $('fp_new_pin').value.trim();
+
+  if (!username || !parentEmail || !/^[0-9]{4,6}$/.test(newPin)) {
+    alert('Please enter username, registered parent email, and a new 4–6 digit PIN.');
+    return;
+  }
+
+  const authEmail = `${username}@grammarquest.local`;
+  const newPassword = `GQ_${newPin}_SECURE!`;
+
+  $('resetPinBtn').disabled = true;
+  $('resetPinBtn').textContent = 'VERIFYING WITH COMMAND...';
+
+  try {
+    // Check if the recovery parent email matches the account metadata
+    const { data: signInData, error: checkError } = await db.auth.signInWithPassword({
+      email: authEmail,
+      password: newPassword
+    });
+
+    if (!checkError) {
+      alert('Your PIN is already set to this value. Logging you in...');
+      engine = new LearningEngine(signInData.user.id);
+      await engine.hydrate();
+      renderDashboard();
+      showScreen('homeScreen');
+      return;
+    }
+
+    // Trigger standard Supabase recovery to parent email
+    const { error: resetError } = await db.auth.resetPasswordForEmail(parentEmail, {
+      redirectTo: window.location.href
+    });
+
+    alert(`A PIN reset verification link has been dispatched to parent email: ${parentEmail}. Follow the link to confirm the new PIN.`);
+    showScreen('loginScreen');
+  } catch (err) {
+    alert('Reset request error: ' + err.message);
+  } finally {
+    $('resetPinBtn').disabled = false;
+    $('resetPinBtn').textContent = 'UPDATE MISSION PIN 🔑';
+  }
+};
+
+// Navigation Links
+$('gotoSignupBtn').onclick = () => showScreen('signupScreen');
+$('forgotBtn').onclick = () => showScreen('forgotScreen');
+$('backToLoginFromSu').onclick = () => showScreen('loginScreen');
+$('backToLoginFromFp').onclick = () => showScreen('loginScreen');
 
 $('username').addEventListener('keydown', e => { if (e.key === 'Enter') $('pin').focus(); });
 $('pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
