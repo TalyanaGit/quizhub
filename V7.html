@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Grammar Quest V7</title>
+<title>Grammar Quest V8</title>
 <style>
 :root{
   --green-deep:#1a1447;
@@ -48,7 +48,7 @@ body{
 
 .hidden{display:none !important}
 
-/* Top App Header */
+/* Header */
 .app-header{
   background:linear-gradient(180deg, var(--green-deep), var(--green-main));
   color:#fff;
@@ -93,7 +93,7 @@ body{
   align-items:center;
 }
 
-/* Illustrated Scene Banner */
+/* Scene */
 .scene-container{
   position:relative;
   width:100%;
@@ -111,7 +111,7 @@ body{
   pointer-events:none;
 }
 
-/* Mission Control Panel */
+/* Mission Sign */
 .wood-sign-wrap{
   position:relative;
   margin:-42px 18px 16px;
@@ -162,7 +162,6 @@ body{
   margin-top:2px;
 }
 
-/* Badges */
 .rank-badge{
   display:inline-flex;
   align-items:center;
@@ -178,7 +177,6 @@ body{
   box-shadow:0 0 12px rgba(62,201,214,.4);
 }
 
-/* Login Card */
 .content-body{
   padding:0 18px 24px;
   flex:1;
@@ -266,14 +264,13 @@ body{
   padding:4px;
 }
 
-/* Layout Utilities */
 button{font:inherit}
 .primary{background:var(--green-main);color:#fff;border:0;border-radius:12px;padding:13px;font-weight:700;cursor:pointer}
 .secondary{background:#e3d9fa;color:var(--text-dark);border:0;border-radius:12px;padding:13px;font-weight:700;cursor:pointer}
 .help{background:#dbeaff;color:#1f4e8c;border:0;border-radius:12px;padding:13px;font-weight:700;cursor:pointer}
 .wide{width:100%;margin-top:10px}
 
-/* Dashboard Specifics */
+/* Dashboards */
 .dash-wrap{padding:18px}
 .journey-hero{background:#e5defa;padding:18px;border-radius:18px;text-align:center;margin-bottom:18px;border:2px solid var(--parchment-border)}
 .journey-hero h1{font:900 28px Georgia,serif;margin:4px 0;color:var(--green-deep)}
@@ -345,8 +342,16 @@ button{font:inherit}
   justify-content:space-between;
   align-items:center;
 }
-.hint-hearts{font-size:16px;letter-spacing:2px}
-.heart-used{opacity:0.25}
+.hint-badges{display:flex;gap:6px}
+.hint-badge-pill{
+  font-size:11px;
+  font-weight:800;
+  padding:4px 8px;
+  border-radius:12px;
+  background:#efe1be;
+  color:#735312;
+}
+.hint-badge-pill.active{background:var(--gold-accent);color:#2d2470}
 .hint-btn{
   background:linear-gradient(180deg,#ffcc33,#e6a800);
   border:1px solid #b87a05;
@@ -399,6 +404,19 @@ button{font:inherit}
 }
 .rulebook-drawer{margin-top:14px;padding:14px;background:#fff;border:2px solid #d8cdf5;border-radius:14px}
 .rule-item{padding:8px 0;border-bottom:1px solid #ece4fb;font-size:13px}
+
+/* Parent Analytics */
+.trend-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:13px}
+.trend-track{flex:1;height:10px;background:#e3d9fa;border-radius:6px;overflow:hidden}
+.trend-fill{height:100%;background:var(--neon-teal)}
+.recent-mistake-card{
+  background:#fff;
+  border:1px solid #ffd2e6;
+  border-radius:8px;
+  padding:8px 10px;
+  margin-bottom:6px;
+  font-size:12px;
+}
 </style>
 </head>
 <body>
@@ -439,7 +457,6 @@ button{font:inherit}
         <g transform="translate(475,55)">
           <circle cx="0" cy="0" r="26" fill="#3ec9d6"/>
         </g>
-        <!-- Astronaut Character -->
         <g transform="translate(210,55)">
           <ellipse cx="45" cy="110" rx="34" ry="42" fill="#3ec9d6"/>
           <circle cx="45" cy="42" r="36" fill="#241c5c"/>
@@ -455,7 +472,7 @@ button{font:inherit}
       <div class="wood-sign">
         <div class="sign-small">YOUR GRAMMAR MISSION</div>
         <div class="sign-title">Begins Here!</div>
-        <div class="sign-sub">Learn rules. Master skills. Rank up your rank.</div>
+        <div class="sign-sub">Learn rules. Master skills. Rank up!</div>
       </div>
     </div>
 
@@ -487,7 +504,7 @@ button{font:inherit}
       <h1 id="rankTitle">Cadet Explorer</h1>
       <div style="font-weight:700;font-size:16px;color:var(--neon-purple)">Simple Present Master Track</div>
       <div style="margin-top:14px;font-weight:800;font-size:15px">
-        <span id="mastered">0</span> / <span id="totalRules">7</span> Principles Mastered
+        <span id="mastered">0</span> / <span id="totalRules">7</span> Grammar Skills Mastered
       </div>
       <div class="mastery-track"><div class="mastery-fill" id="masteryFill"></div></div>
       <div id="streakBanner" style="margin-top:12px;font-weight:800;font-size:13px;color:#7a5a00"></div>
@@ -495,12 +512,12 @@ button{font:inherit}
 
     <!-- Daily Mission Card -->
     <div class="mission-box">
-      <div style="font-weight:900;font-size:15px;letter-spacing:1px;color:var(--gold-accent);margin-bottom:8px">
+      <div style="font-weight:900;font-size:15px;letter-spacing:1px;color:var(--gold-accent);margin-bottom:8px" id="missionSummaryTitle">
         🚀 TODAY'S MISSION (10 QUESTIONS)
       </div>
-      <div class="mission-row"><span>🎯 Weak-Skill Focus</span><b>4 questions</b></div>
-      <div class="mission-row"><span>🔄 Spaced Review</span><b>3 questions</b></div>
-      <div class="mission-row"><span>🌟 New Challenges</span><b>3 questions</b></div>
+      <div class="mission-row"><span>🎯 Weak-Skill Focus</span><b id="countWeak">4 questions</b></div>
+      <div class="mission-row"><span>🔄 Spaced Review</span><b id="countReview">3 questions</b></div>
+      <div class="mission-row"><span>🌟 New Challenges</span><b id="countNew">3 questions</b></div>
       <div style="margin-top:12px">
         <button class="btn-cta" id="startMissionBtn" type="button">START MISSION 🚀</button>
       </div>
@@ -512,7 +529,7 @@ button{font:inherit}
         <div class="stat-card"><b id="todayQuestions">0</b>Questions</div>
         <div class="stat-card"><b id="todayCorrect">0</b>Correct</div>
         <div class="stat-card"><b id="todayAccuracy">0%</b>Accuracy</div>
-        <div class="stat-card"><b id="todayImproved">0</b>Rules Upgraded</div>
+        <div class="stat-card"><b id="todayImproved">0</b>Skills Upgraded</div>
       </div>
     </div>
 
@@ -541,11 +558,15 @@ button{font:inherit}
     
     <div class="question-text" id="questionText"></div>
 
-    <!-- Progressive Hint Component -->
+    <!-- Progressive Hint Component (Non-punitive) -->
     <div class="hint-container">
       <div class="hint-header">
-        <div class="hint-hearts" id="hintHearts">❤️❤️❤️</div>
-        <button class="hint-btn" id="hintBtn" type="button">💡 Need Help? (Tier 1)</button>
+        <div class="hint-badges">
+          <span class="hint-badge-pill" id="hb1">💡 Step 1</span>
+          <span class="hint-badge-pill" id="hb2">💡 Step 2</span>
+          <span class="hint-badge-pill" id="hb3">💡 Step 3</span>
+        </div>
+        <button class="hint-btn" id="hintBtn" type="button">Need a Clue?</button>
       </div>
       <div class="hint-content hidden" id="hintContent"></div>
     </div>
@@ -583,30 +604,43 @@ button{font:inherit}
   <!-- 5. PARENT DASHBOARD -->
   <section id="parentScreen" class="dash-wrap hidden">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <h3 style="margin:0;color:var(--green-deep)">📊 Parent Diagnostics & Error Analysis</h3>
+      <h3 style="margin:0;color:var(--green-deep)">📊 Parent Diagnostics</h3>
       <button class="text-link" id="closeParentBtn" type="button">← Child View</button>
     </div>
     
     <div class="stats-grid">
-      <div class="stat-card"><b id="pMastery">0/7</b>Rules Mastered</div>
+      <div class="stat-card"><b id="pMastery">0/7</b>Skills Mastered</div>
       <div class="stat-card"><b id="pAccuracy">0%</b>Overall Accuracy</div>
       <div class="stat-card"><b id="pQuestions">0</b>Total Attempts</div>
       <div class="stat-card"><b id="pStreak">0</b>Practice Streak</div>
     </div>
 
-    <div style="margin-top:20px;background:#ffe9f3;border:2px solid var(--neon-pink);border-radius:14px;padding:14px">
-      <h4 style="margin:0 0 6px;color:#95165c">⚠️ Error Type Diagnostic</h4>
-      <div id="errorAnalysisList" style="font-size:13px;color:var(--text-dark)"></div>
+    <!-- Weakest Skills Section -->
+    <div style="margin-top:16px;background:#ffe9f3;border:2px solid var(--neon-pink);border-radius:14px;padding:14px">
+      <h4 style="margin:0 0 6px;color:#95165c">🔴 Weakest Skills (Needs Focus)</h4>
+      <div id="weakSkillsList" style="font-size:13px"></div>
     </div>
 
-    <h4 style="margin:20px 0 10px;color:var(--green-deep)">Rule-by-Rule Mastery Depth</h4>
+    <!-- Recent Mistakes Log -->
+    <div style="margin-top:16px;background:#fff;border:2px solid var(--parchment-border);border-radius:14px;padding:14px">
+      <h4 style="margin:0 0 8px;color:var(--green-deep)">📝 Recent Mistakes</h4>
+      <div id="recentMistakesList"></div>
+    </div>
+
+    <!-- Learning Trend Section -->
+    <div style="margin-top:16px;background:#fff;border:2px solid var(--parchment-border);border-radius:14px;padding:14px">
+      <h4 style="margin:0 0 8px;color:var(--green-deep)">📈 Learning Trend (Last 7 Days)</h4>
+      <div id="trendList"></div>
+    </div>
+
+    <h4 style="margin:20px 0 10px;color:var(--green-deep)">Rule-by-Rule Mastery Breakdown</h4>
     <div id="parentRulesList"></div>
   </section>
 
 </main>
 
 <script>
-// 1. RULE REGISTRY
+// 1. RULES DEFINITION
 const rules = [
   ['subject', 'I / You / We / They + base verb', 'With I, you, we, and they, keep the verb in base form.', 'I play cricket. • They read books.'],
   ['third', 'He / She / It + s / es', 'With he, she, and it, the verb needs an -s or -es suffix.', 'He plays. • She watches.'],
@@ -617,193 +651,66 @@ const rules = [
   ['uses', 'Universal facts & habits', 'Use Simple Present for permanent truths, routines, and habits.', 'Water boils at 100°C.']
 ];
 
-// Space Theme Ranks
 const RANKS = ['Cadet', 'Explorer', 'Navigator', 'Pilot', 'Ranger', 'Commander', 'Captain', 'Galaxy Master'];
 
-// 2. QUESTION BANK
+// 2. EXPANDED QUESTION BANK WITH REALISTIC MISCONCEPTION DISTRACTORS
 const questions = [
-  {
-    id: 'q01', text: 'He ___ to school every day.', options: ['go','goes','going','went'], correct: 'goes',
-    rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement',
-    hint_1: 'Who is doing the action? (He/She/It)',
-    hint_2: 'Singular third-person subjects need an -s or -es.',
-    hint_3: 'The base verb is "go", so add -es.'
-  },
-  {
-    id: 'q02', text: 'They ___ football on Sundays.', options: ['plays','play','playing','played'], correct: 'play',
-    rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement',
-    hint_1: 'Look at the subject "They". Is it singular or plural?',
-    hint_2: 'With I/You/We/They, do not add -s to the verb.',
-    hint_3: 'Select the plain base verb "play".'
-  },
-  {
-    id: 'q03', text: '___ she like mangoes?', options: ['Do','Does','Is','Did'], correct: 'Does',
-    rule: 'do', difficulty: 'medium', error_type: 'wrong_auxiliary',
-    hint_1: 'Check the subject: "she".',
-    hint_2: 'We use "Do" for plural/I/you, and "Does" for he/she/it.',
-    hint_3: 'Select "Does".'
-  },
-  {
-    id: 'q04', text: "Riya doesn't ___ coffee.", options: ['likes','like','liked','liking'], correct: 'like',
-    rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux',
-    hint_1: 'Notice the auxiliary word "doesn\'t".',
-    hint_2: 'After "does" or "doesn\'t", the main verb reverts to base form.',
-    hint_3: 'Do not add -s. Pick "like".'
-  },
-  {
-    id: 'q05', text: 'My father ___ the newspaper every morning.', options: ['read','reads','reading','readed'], correct: 'reads',
-    rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement',
-    hint_1: '"My father" can be replaced by "He".',
-    hint_2: 'He/She/It verbs end in -s.',
-    hint_3: 'Select "reads".'
-  },
-  {
-    id: 'q06', text: 'We ___ watch TV in the morning.', options: ['does','doesn’t','do','don’t'], correct: 'don’t',
-    rule: 'negative', difficulty: 'medium', error_type: 'wrong_negation',
-    hint_1: 'Check the subject "We".',
-    hint_2: 'Plural subjects use "don\'t", not "doesn\'t".',
-    hint_3: 'Select "don\'t".'
-  },
-  {
-    id: 'q07', text: 'Does Amit ___ cricket?', options: ['plays','play','playing','played'], correct: 'play',
-    rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux',
-    hint_1: 'The question starts with "Does".',
-    hint_2: 'The main verb must stay base form.',
-    hint_3: 'Choose "play".'
-  },
-  {
-    id: 'q08', text: 'The sun ___ in the east.', options: ['rise','rises','rising','rose'], correct: 'rises',
-    rule: 'uses', difficulty: 'easy', error_type: 'universal_fact',
-    hint_1: 'This is a permanent scientific fact.',
-    hint_2: '"The sun" is a singular noun (It).',
-    hint_3: 'Select "rises".'
-  },
-  {
-    id: 'q09', text: 'She ___ her homework after dinner.', options: ['do','does','doing','did'], correct: 'does',
-    rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement',
-    hint_1: 'Subject is "She".',
-    hint_2: 'Add -es to the root verb "do".',
-    hint_3: 'Choose "does".'
-  },
-  {
-    id: 'q10', text: 'I ___ milk every morning.', options: ['drinks','drink','drinking','drank'], correct: 'drink',
-    rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement',
-    hint_1: 'Subject is "I".',
-    hint_2: 'I takes the base verb with no extra -s.',
-    hint_3: 'Choose "drink".'
-  },
-  {
-    id: 'q11', text: 'He ___ TV every evening.', options: ['watch','watches','watchs','watching'], correct: 'watches',
-    rule: 'spelling', difficulty: 'medium', error_type: 'spelling_rule',
-    hint_1: 'The verb ends in -ch.',
-    hint_2: 'Verbs ending in -ch add -es, not just -s.',
-    hint_3: 'Select "watches".'
-  },
-  {
-    id: 'q12', text: 'Do they ___ English?', options: ['speaks','speak','speaking','spoke'], correct: 'speak',
-    rule: 'do', difficulty: 'medium', error_type: 'verb_form_after_aux',
-    hint_1: 'Notice the question auxiliary "Do".',
-    hint_2: 'Use the simple base verb.',
-    hint_3: 'Select "speak".'
-  },
-  {
-    id: 'q13', text: 'My brother ___ football.', options: ["don't like","doesn't likes","doesn't like","not like"], correct: "doesn't like",
-    rule: 'negative', difficulty: 'hard', error_type: 'compound_negation',
-    hint_1: '"My brother" is singular (He).',
-    hint_2: 'Needs "doesn\'t" + the plain base verb.',
-    hint_3: 'Pick "doesn\'t like".'
-  },
-  {
-    id: 'q14', text: 'The teacher ___ English.', options: ['teach','teaches','teaching','taught'], correct: 'teaches',
-    rule: 'spelling', difficulty: 'medium', error_type: 'spelling_rule',
-    hint_1: '"Teach" ends in -ch.',
-    hint_2: 'Singular third-person takes -es.',
-    hint_3: 'Select "teaches".'
-  },
-  {
-    id: 'q15', text: 'Birds ___ in the sky.', options: ['flies','fly','flying','flew'], correct: 'fly',
-    rule: 'uses', difficulty: 'easy', error_type: 'subject_verb_agreement',
-    hint_1: '"Birds" is plural (They).',
-    hint_2: 'Plural nouns take the base verb.',
-    hint_3: 'Pick "fly".'
-  },
-  {
-    id: 'q16', text: 'Does she ___ to school by bus?', options: ['goes','go','going','went'], correct: 'go',
-    rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux',
-    hint_1: '"Does" carries the third-person mark.',
-    hint_2: 'Keep the main verb in base form.',
-    hint_3: 'Select "go".'
-  },
-  {
-    id: 'q17', text: 'Rahul ___ his teeth twice a day.', options: ['brush','brushes','brushing','brushed'], correct: 'brushes',
-    rule: 'spelling', difficulty: 'easy', error_type: 'spelling_rule',
-    hint_1: '"Brush" ends in -sh.',
-    hint_2: 'Words ending in -sh add -es for singular subjects.',
-    hint_3: 'Pick "brushes".'
-  },
-  {
-    id: 'q18', text: 'You ___ very fast.', options: ['runs','run','running','ran'], correct: 'run',
-    rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement',
-    hint_1: 'The subject is "You".',
-    hint_2: 'You takes the plain verb without -s.',
-    hint_3: 'Choose "run".'
-  },
-  {
-    id: 'q19', text: 'She ___ play tennis.', options: ['do','does',"doesn't","don't"], correct: "doesn't",
-    rule: 'negative', difficulty: 'medium', error_type: 'wrong_negation',
-    hint_1: 'Subject is "She".',
-    hint_2: 'Negative auxiliary for she is "doesn\'t".',
-    hint_3: 'Select "doesn\'t".'
-  },
-  {
-    id: 'q20', text: 'Water ___ at 100°C.', options: ['boil','boils','boiling','boiled'], correct: 'boils',
-    rule: 'uses', difficulty: 'easy', error_type: 'universal_fact',
-    hint_1: 'Scientific truth with uncountable noun (It).',
-    hint_2: 'Uncountable nouns take singular verbs with -s.',
-    hint_3: 'Pick "boils".'
-  },
-  {
-    id: 'q21', text: 'She ___ English every day.', options: ['study','studies','studying','studied'], correct: 'studies',
-    rule: 'spelling', difficulty: 'hard', error_type: 'spelling_rule',
-    hint_1: 'The verb "study" ends in consonant + y.',
-    hint_2: 'Change -y to -i and add -es.',
-    hint_3: 'Select "studies".'
-  },
-  {
-    id: 'q22', text: 'Does the train ___ at platform 2?', options: ['arrive','arrives','arriving','arrived'], correct: 'arrive',
-    rule: 'base', difficulty: 'hard', error_type: 'verb_form_after_aux',
-    hint_1: 'Look at the sentence starter "Does".',
-    hint_2: 'Auxiliary takes the -s; the verb stays base.',
-    hint_3: 'Select "arrive".'
-  },
-  {
-    id: 'q23', text: 'He ___ his lunch box to school.', options: ['carry','carries','carrying','carried'], correct: 'carries',
-    rule: 'spelling', difficulty: 'hard', error_type: 'spelling_rule',
-    hint_1: '"Carry" ends in a consonant + y.',
-    hint_2: 'Drop the y and add -ies.',
-    hint_3: 'Choose "carries".'
-  },
-  {
-    id: 'q24', text: '___ the shop open at 9 am?', options: ['Do','Does','Is','Are'], correct: 'Does',
-    rule: 'do', difficulty: 'hard', error_type: 'wrong_auxiliary',
-    hint_1: '"The shop" is a single building (It).',
-    hint_2: 'Use "Does" for singular entities in Simple Present.',
-    hint_3: 'Select "Does".'
-  }
+  // Subject-Verb Agreement
+  { id: 'q01', text: 'They ___ football on Sundays.', options: ['play', 'plays', 'playing', 'are play'], correct: 'play', rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Look at the subject "They".', hint_2: 'Plural subjects do not add -s to the verb.', hint_3: 'Select "play".' },
+  { id: 'q02', text: 'I ___ milk every morning.', options: ['drink', 'drinks', 'drinking', 'am drink'], correct: 'drink', rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Look at the subject "I".', hint_2: 'With "I", use the plain base verb.', hint_3: 'Choose "drink".' },
+  { id: 'q03', text: 'You ___ very fast.', options: ['run', 'runs', 'running', 'is run'], correct: 'run', rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Subject is "You".', hint_2: 'You takes base verb without -s.', hint_3: 'Choose "run".' },
+  { id: 'q04', text: 'We ___ to the park on Fridays.', options: ['go', 'goes', 'going', 'gone'], correct: 'go', rule: 'subject', difficulty: 'medium', error_type: 'subject_verb_agreement', hint_1: '"We" refers to more than one person.', hint_2: 'Use base verb.', hint_3: 'Pick "go".' },
+
+  // Third Person Singular
+  { id: 'q05', text: 'He ___ to school every day.', options: ['goes', 'go', 'going', 'is go'], correct: 'goes', rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Subject is singular "He".', hint_2: 'He/She/It verbs end in -s or -es.', hint_3: 'Pick "goes".' },
+  { id: 'q06', text: 'My father ___ the newspaper every morning.', options: ['reads', 'read', 'reading', 'is reads'], correct: 'reads', rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: '"My father" is singular (He).', hint_2: 'Add -s to read.', hint_3: 'Choose "reads".' },
+  { id: 'q07', text: 'She ___ her homework after dinner.', options: ['does', 'do', 'doing', 'is do'], correct: 'does', rule: 'third', difficulty: 'medium', error_type: 'subject_verb_agreement', hint_1: 'Subject is "She".', hint_2: 'Use does for third person.', hint_3: 'Select "does".' },
+  { id: 'q08', text: 'Aarav ___ tennis on weekends.', options: ['plays', 'play', 'playes', 'playing'], correct: 'plays', rule: 'third', difficulty: 'hard', error_type: 'subject_verb_agreement', hint_1: 'Aarav is a single person.', hint_2: 'Standard verbs ending in vowel+y take -s.', hint_3: 'Choose "plays".' },
+
+  // Do / Does Questions
+  { id: 'q09', text: '___ she like mangoes?', options: ['Does', 'Do', 'Is', 'Did'], correct: 'Does', rule: 'do', difficulty: 'easy', error_type: 'wrong_auxiliary', hint_1: 'Subject is "she".', hint_2: 'He/She/It takes "Does".', hint_3: 'Select "Does".' },
+  { id: 'q10', text: 'Do they ___ English?', options: ['speak', 'speaks', 'speaking', 'spoke'], correct: 'speak', rule: 'do', difficulty: 'medium', error_type: 'verb_form_after_aux', hint_1: 'The sentence already has "Do".', hint_2: 'The main verb must be base form.', hint_3: 'Choose "speak".' },
+  { id: 'q11', text: '___ the shop open at 9 am?', options: ['Does', 'Do', 'Is', 'Are'], correct: 'Does', rule: 'do', difficulty: 'hard', error_type: 'wrong_auxiliary', hint_1: '"The shop" is singular (It).', hint_2: 'Singular nouns take Does.', hint_3: 'Select "Does".' },
+  { id: 'q12', text: '___ Priya and Rohan play chess?', options: ['Do', 'Does', 'Is', 'Are'], correct: 'Do', rule: 'do', difficulty: 'hard', error_type: 'wrong_auxiliary', hint_1: 'Priya and Rohan are two people (They).', hint_2: 'Plural subjects take Do.', hint_3: 'Pick "Do".' },
+
+  // Negation (Don't / Doesn't)
+  { id: 'q13', text: 'We ___ watch TV in the morning.', options: ["don't", "doesn't", "not", "no"], correct: "don't", rule: 'negative', difficulty: 'easy', error_type: 'wrong_negation', hint_1: 'Subject is "We".', hint_2: 'Plural takes don\'t.', hint_3: 'Select "don\'t".' },
+  { id: 'q14', text: 'She ___ play tennis.', options: ["doesn't", "don't", "not", "isn't"], correct: "doesn't", rule: 'negative', difficulty: 'medium', error_type: 'wrong_negation', hint_1: 'Subject is "She".', hint_2: 'Third person uses doesn\'t.', hint_3: 'Select "doesn\'t".' },
+  { id: 'q15', text: 'My brother ___ football.', options: ["doesn't like", "don't like", "doesn't likes", "don't likes"], correct: "doesn't like", rule: 'negative', difficulty: 'hard', error_type: 'compound_negation', hint_1: 'My brother is singular (He).', hint_2: 'Use doesn\'t + base verb.', hint_3: 'Pick "doesn\'t like".' },
+  { id: 'q16', text: 'These birds ___ migrate in winter.', options: ["don't", "doesn't", "no", "not"], correct: "don't", rule: 'negative', difficulty: 'hard', error_type: 'wrong_negation', hint_1: '"These birds" is plural (They).', hint_2: 'Plural subjects use don\'t.', hint_3: 'Choose "don\'t".' },
+
+  // Base Verb after Auxiliaries
+  { id: 'q17', text: "Riya doesn't ___ coffee.", options: ['like', 'likes', 'liking', 'liked'], correct: 'like', rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux', hint_1: 'Notice "doesn\'t".', hint_2: 'After doesn\'t, verb stays base.', hint_3: 'Choose "like".' },
+  { id: 'q18', text: 'Does Amit ___ cricket?', options: ['play', 'plays', 'playing', 'played'], correct: 'play', rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux', hint_1: 'The sentence starts with "Does".', hint_2: 'Does takes the -s; main verb stays base.', hint_3: 'Pick "play".' },
+  { id: 'q19', text: 'Does she ___ to school by bus?', options: ['go', 'goes', 'going', 'went'], correct: 'go', rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux', hint_1: 'The auxiliary "Does" is already present.', hint_2: 'Keep verb in base form.', hint_3: 'Select "go".' },
+  { id: 'q20', text: 'Does the train ___ on platform 2?', options: ['arrive', 'arrives', 'arriving', 'arrived'], correct: 'arrive', rule: 'base', difficulty: 'hard', error_type: 'verb_form_after_aux', hint_1: 'Look at "Does".', hint_2: 'Base verb only.', hint_3: 'Choose "arrive".' },
+
+  // Spelling Rules
+  { id: 'q21', text: 'He ___ TV every evening.', options: ['watches', 'watch', 'watchs', 'watching'], correct: 'watches', rule: 'spelling', difficulty: 'easy', error_type: 'spelling_rule', hint_1: 'Verb ends in -ch.', hint_2: 'Add -es to verbs ending in -ch.', hint_3: 'Pick "watches".' },
+  { id: 'q22', text: 'Rahul ___ his teeth twice a day.', options: ['brushes', 'brush', 'brushs', 'brushing'], correct: 'brushes', rule: 'spelling', difficulty: 'easy', error_type: 'spelling_rule', hint_1: 'Verb ends in -sh.', hint_2: 'Add -es for third person.', hint_3: 'Choose "brushes".' },
+  { id: 'q23', text: 'The teacher ___ English.', options: ['teaches', 'teach', 'teachs', 'teaching'], correct: 'teaches', rule: 'spelling', difficulty: 'medium', error_type: 'spelling_rule', hint_1: '"Teach" ends in -ch.', hint_2: 'Add -es for singular subjects.', hint_3: 'Pick "teaches".' },
+  { id: 'q24', text: 'She ___ English every day.', options: ['studies', 'study', 'studys', 'studying'], correct: 'studies', rule: 'spelling', difficulty: 'hard', error_type: 'spelling_rule', hint_1: '"Study" ends in consonant + y.', hint_2: 'Change -y to -ies.', hint_3: 'Choose "studies".' },
+  { id: 'q25', text: 'He ___ his bag to school.', options: ['carries', 'carry', 'carrys', 'carrying'], correct: 'carries', rule: 'spelling', difficulty: 'hard', error_type: 'spelling_rule', hint_1: '"Carry" has consonant + y.', hint_2: 'Change -y to -ies.', hint_3: 'Pick "carries".' },
+
+  // Facts & Habits
+  { id: 'q26', text: 'The sun ___ in the east.', options: ['rises', 'rise', 'rising', 'rose'], correct: 'rises', rule: 'uses', difficulty: 'easy', error_type: 'universal_fact', hint_1: 'Permanent scientific fact.', hint_2: 'The sun is singular (It).', hint_3: 'Pick "rises".' },
+  { id: 'q27', text: 'Water ___ at 100°C.', options: ['boils', 'boil', 'boiling', 'boiled'], correct: 'boils', rule: 'uses', difficulty: 'easy', error_type: 'universal_fact', hint_1: 'Universal fact.', hint_2: 'Uncountable noun takes -s.', hint_3: 'Select "boils".' },
+  { id: 'q28', text: 'Birds ___ in the sky.', options: ['fly', 'flies', 'flying', 'flew'], correct: 'fly', rule: 'uses', difficulty: 'medium', error_type: 'subject_verb_agreement', hint_1: '"Birds" is plural.', hint_2: 'Plural takes base verb.', hint_3: 'Choose "fly".' }
 ];
 
-// 3. PERSISTENCE & SPACED REPETITION ENGINE
+// 3. PERSISTENCE & SCHEDULING MODEL
 const INTERVAL_SCHEDULE = [1, 3, 7, 14, 30];
 
-let state = JSON.parse(localStorage.getItem('gq-v7') || '{}');
+let state = JSON.parse(localStorage.getItem('gq-v8') || '{}');
 if (!state.q) state.q = {};
 if (!state.errors) state.errors = {};
+if (!state.recentMistakes) state.recentMistakes = [];
 if (!state.streak) state.streak = 0;
 if (!state.lastPracticeDate) state.lastPracticeDate = null;
-if (!state.history) state.history = [];
+if (!state.dailyHistory) state.dailyHistory = {};
 
 function saveState() {
-  localStorage.setItem('gq-v7', JSON.stringify(state));
+  localStorage.setItem('gq-v8', JSON.stringify(state));
 }
 
 function getQuestionState(id) {
@@ -837,9 +744,10 @@ function updateSpacedRepetition(p, isCorrect) {
   }
 }
 
+// Rigorous Mastery Calculation
 function ruleStats(ruleKey) {
   const qs = questions.filter(q => q.rule === ruleKey);
-  let attempts = 0, mistakes = 0, attemptedQs = 0, recentConsecOk = 0, hasHardCleared = false;
+  let attempts = 0, mistakes = 0, attemptedQs = 0, activeStreaks = 0, hardClearedCount = 0;
 
   qs.forEach(q => {
     const p = state.q[q.id];
@@ -847,36 +755,29 @@ function ruleStats(ruleKey) {
       attempts += p.attempts;
       mistakes += p.mistakes;
       attemptedQs++;
-      if (p.consecutive >= 3) recentConsecOk++;
-      if ((q.difficulty === 'medium' || q.difficulty === 'hard') && p.consecutive > 0) {
-        hasHardCleared = true;
+      if (p.consecutive >= 3) activeStreaks++;
+      if ((q.difficulty === 'medium' || q.difficulty === 'hard') && p.consecutive >= 1) {
+        hardClearedCount++;
       }
     }
   });
 
   const accuracy = attempts ? (attempts - mistakes) / attempts : 0;
-  return { totalQuestions: qs.length, attemptedQs, attempts, mistakes, accuracy, recentConsecOk, hasHardCleared };
+  return { totalQuestions: qs.length, attemptedQs, attempts, mistakes, accuracy, activeStreaks, hardClearedCount };
 }
 
 function isRuleMastered(ruleKey) {
   const s = ruleStats(ruleKey);
-  return s.attemptedQs >= 5 && s.accuracy >= 0.85 && s.recentConsecOk >= 3 && s.hasHardCleared;
+  // Redesigned: >= 5 distinct Qs, >= 85% accuracy, >= 3 active streaks, >= 2 medium/hard cleared
+  return s.attemptedQs >= 5 && s.accuracy >= 0.85 && s.activeStreaks >= 3 && s.hardClearedCount >= 2;
 }
 
-// 4. ADAPTIVE QUEUE BUILDER
-function buildDailyMissionQueue(focusRule = null) {
+// 4. DYNAMIC ADAPTIVE QUEUE BUILDER
+function getDailyMissionDistribution() {
   const todayStr = new Date().toISOString().slice(0,10);
-  let pool = focusRule ? questions.filter(q => q.rule === focusRule) : questions;
-  
-  if (focusRule) {
-    return [...pool].sort(() => Math.random() - 0.5).slice(0, 10);
-  }
+  let reviewPool = [], weakPool = [], newPool = [];
 
-  let reviewPool = [];
-  let weakPool = [];
-  let newPool = [];
-
-  pool.forEach(q => {
+  questions.forEach(q => {
     const p = state.q[q.id];
     if (!p || p.attempts === 0) {
       newPool.push(q);
@@ -889,23 +790,38 @@ function buildDailyMissionQueue(focusRule = null) {
     }
   });
 
+  return { reviewPool, weakPool, newPool };
+}
+
+function buildQuizQueue(focusRule = null) {
   const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
-  
+
+  if (focusRule) {
+    const rulePool = questions.filter(q => q.rule === focusRule);
+    return {
+      queue: shuffle(rulePool),
+      title: `Practice Mission — ${rulePool.length} Questions`
+    };
+  }
+
+  const { reviewPool, weakPool, newPool } = getDailyMissionDistribution();
   const pickedReview = shuffle(reviewPool).slice(0, 3);
   const pickedWeak = shuffle(weakPool).slice(0, 4);
   const pickedNew = shuffle(newPool).slice(0, 3);
 
   let combined = [...pickedReview, ...pickedWeak, ...pickedNew];
-  
   if (combined.length < 10) {
-    const remaining = shuffle(pool.filter(q => !combined.some(c => c.id === q.id)));
+    const remaining = shuffle(questions.filter(q => !combined.some(c => c.id === q.id)));
     combined = combined.concat(remaining.slice(0, 10 - combined.length));
   }
 
-  return shuffle(combined);
+  return {
+    queue: shuffle(combined),
+    title: `Today's Mission — ${combined.length} Questions`
+  };
 }
 
-// 5. RUNTIME STATE
+// 5. RUNTIME CONTROLLER
 let queue = [];
 let pos = 0;
 let score = 0;
@@ -913,10 +829,8 @@ let correctCount = 0;
 let wrongCount = 0;
 let selectedOption = null;
 let locked = false;
-let hintTier = 0;
-let heartsLeft = 3;
+let hintStep = 0;
 let sessionSeenCount = {};
-let currentModeTitle = "Daily Mission";
 
 const $ = id => document.getElementById(id);
 
@@ -962,7 +876,20 @@ function renderDashboard() {
     $('streakBanner').textContent = '🌟 Start your mission streak today!';
   }
 
-  const today = state.today || { date: new Date().toISOString().slice(0,10), questions: 0, correct: 0, improved: 0 };
+  // Calculate dynamic queue distribution for today
+  const { reviewPool, weakPool, newPool } = getDailyMissionDistribution();
+  const cRev = Math.min(reviewPool.length, 3);
+  const cWeak = Math.min(weakPool.length, 4);
+  const cNew = Math.min(newPool.length, 3);
+  const totalM = cRev + cWeak + cNew;
+
+  $('missionSummaryTitle').textContent = `🚀 TODAY'S MISSION (${totalM > 0 ? totalM : 10} QUESTIONS)`;
+  $('countWeak').textContent = `${cWeak} questions`;
+  $('countReview').textContent = `${cRev} questions`;
+  $('countNew').textContent = `${cNew} questions`;
+
+  const todayStr = new Date().toISOString().slice(0,10);
+  const today = state.today || { date: todayStr, questions: 0, correct: 0, improved: 0 };
   $('todayQuestions').textContent = today.questions;
   $('todayCorrect').textContent = today.correct;
   $('todayAccuracy').textContent = (today.questions ? Math.round((today.correct / today.questions) * 100) : 0) + '%';
@@ -977,8 +904,8 @@ function renderDashboard() {
     const cls = mastered ? 'mastered' : (weak ? 'need' : 'learning');
     const status = mastered ? 'MASTERED' : (weak ? 'PRACTICE' : (attempted ? 'IN PROGRESS' : 'NEW'));
     const sub = mastered 
-      ? 'Principle mastered ⭐' 
-      : (weak ? 'Needs reinforcement • Tap to practise' : (attempted ? `${Math.round(s.accuracy*100)}% accuracy (${s.attemptedQs}/${s.totalQuestions} Qs)` : 'Tap to start learning'));
+      ? 'Grammar skill mastered ⭐' 
+      : (weak ? 'Needs practice • Tap to focus' : (attempted ? `${Math.round(s.accuracy*100)}% accuracy (${s.attemptedQs}/${s.totalQuestions} Qs)` : 'Tap to start learning'));
     const dot = mastered ? '✓' : (weak ? '!' : '•');
 
     return `<div class="map-card ${cls}" data-rule="${r[0]}">
@@ -992,48 +919,48 @@ function renderDashboard() {
   }).join('');
 
   document.querySelectorAll('.map-card').forEach(card => {
-    card.onclick = () => startQuiz(card.dataset.rule, `Focus: ${card.dataset.rule}`);
+    card.onclick = () => startQuiz(card.dataset.rule);
   });
 
   if (masteredCount < rules.length) {
     const nextRank = RANKS[Math.min(masteredCount + 1, RANKS.length - 1)];
-    $('nextRankText').textContent = `Master remaining principles to unlock the ${nextRank} Rank.`;
+    $('nextRankText').textContent = `Master remaining skills to unlock the ${nextRank} Rank.`;
   } else {
-    $('nextRankText').textContent = 'All principles mastered! Complete daily missions to maintain rank retention.';
+    $('nextRankText').textContent = 'All skills mastered! Keep completing missions to maintain retention.';
   }
 }
 
-function startQuiz(focusRule = null, modeLabel = "Daily Mission") {
-  queue = buildDailyMissionQueue(focusRule);
+function startQuiz(focusRule = null) {
+  const mission = buildQuizQueue(focusRule);
+  queue = mission.queue;
   pos = 0;
   score = 0;
   correctCount = 0;
   wrongCount = 0;
-  heartsLeft = 3;
   sessionSeenCount = {};
-  currentModeTitle = modeLabel;
-  $('quizModeLabel').textContent = currentModeTitle;
+  $('quizModeLabel').textContent = mission.title;
   showScreen('quizScreen');
   renderQuestion();
 }
 
-function renderHearts() {
-  let hearts = '';
-  for (let i = 0; i < 3; i++) {
-    hearts += i < heartsLeft ? '❤️' : '<span class="heart-used">🤍</span>';
-  }
-  $('hintHearts').innerHTML = hearts;
-  $('hintBtn').disabled = heartsLeft <= 0;
-  if (heartsLeft === 3) $('hintBtn').textContent = '💡 Hint 1 (Concept)';
-  else if (heartsLeft === 2) $('hintBtn').textContent = '💡 Hint 2 (Rule)';
-  else if (heartsLeft === 1) $('hintBtn').textContent = '💡 Hint 3 (Closer)';
-  else $('hintBtn').textContent = '🔒 No Hints Left';
+function renderHints() {
+  ['hb1','hb2','hb3'].forEach((id, idx) => {
+    if (idx < hintStep) $(id).classList.add('active');
+    else $(id).classList.remove('active');
+  });
+
+  const hintBtn = $('hintBtn');
+  hintBtn.disabled = hintStep >= 3;
+  if (hintStep === 0) hintBtn.textContent = '💡 Hint 1 (Concept)';
+  else if (hintStep === 1) hintBtn.textContent = '💡 Hint 2 (Rule)';
+  else if (hintStep === 2) hintBtn.textContent = '💡 Hint 3 (Helper)';
+  else hintBtn.textContent = '💡 All Hints Shown';
 }
 
 function renderQuestion() {
   selectedOption = null;
   locked = false;
-  hintTier = 0;
+  hintStep = 0;
   const q = queue[pos];
 
   $('progressVal').textContent = `Question ${pos + 1} of ${queue.length}`;
@@ -1041,22 +968,19 @@ function renderQuestion() {
   $('scoreVal').textContent = score;
   $('questionText').textContent = q.text;
 
-  // Reset hints
   $('hintContent').classList.add('hidden');
   $('hintContent').textContent = '';
-  renderHearts();
+  renderHints();
 
   $('feedbackText').textContent = '';
   $('feedbackText').className = 'feedback-box';
   $('rulebookBox').classList.add('hidden');
 
-  // Reset submit button state
   const submitBtn = $('submitBtn');
   submitBtn.textContent = pos === queue.length - 1 ? 'SUBMIT & FINISH 🚀' : 'SUBMIT ANSWER →';
   submitBtn.style.background = '';
   submitBtn.onclick = evaluateAnswer;
 
-  // Render options
   $('answersGrid').innerHTML = [...q.options].sort(() => Math.random() - 0.5).map(opt =>
     `<button class="answer-btn" data-v="${opt.replace(/"/g, '&quot;')}">${opt}</button>`
   ).join('');
@@ -1072,20 +996,19 @@ function renderQuestion() {
 }
 
 function triggerHint() {
-  if (heartsLeft <= 0 || locked) return;
+  if (hintStep >= 3 || locked) return;
   const q = queue[pos];
-  heartsLeft--;
-  hintTier++;
+  hintStep++;
 
   $('hintContent').classList.remove('hidden');
-  if (hintTier === 1) {
-    $('hintContent').innerHTML = `<b>Hint 1:</b> ${q.hint_1}`;
-  } else if (hintTier === 2) {
-    $('hintContent').innerHTML = `<b>Hint 2:</b> ${q.hint_2}`;
+  if (hintStep === 1) {
+    $('hintContent').innerHTML = `<b>Concept Clue:</b> ${q.hint_1}`;
+  } else if (hintStep === 2) {
+    $('hintContent').innerHTML = `<b>Rule Reminder:</b> ${q.hint_2}`;
   } else {
-    $('hintContent').innerHTML = `<b>Hint 3:</b> ${q.hint_3}`;
+    $('hintContent').innerHTML = `<b>Answer Helper:</b> ${q.hint_3}`;
   }
-  renderHearts();
+  renderHints();
 }
 
 function evaluateAnswer() {
@@ -1100,13 +1023,19 @@ function evaluateAnswer() {
   const wasRuleMasteredBefore = isRuleMastered(q.rule);
   const isCorrect = selectedOption === q.correct;
 
-  // Track session attempts
+  // Track session attempts & daily trend
   let todayStr = new Date().toISOString().slice(0,10);
   let today = state.today || { date: todayStr, questions: 0, correct: 0, improved: 0 };
   if (today.date !== todayStr) today = { date: todayStr, questions: 0, correct: 0, improved: 0 };
   today.questions++;
   if (isCorrect) today.correct++;
   state.today = today;
+
+  if (!state.dailyHistory[todayStr]) {
+    state.dailyHistory[todayStr] = { attempts: 0, correct: 0 };
+  }
+  state.dailyHistory[todayStr].attempts++;
+  if (isCorrect) state.dailyHistory[todayStr].correct++;
 
   document.querySelectorAll('.answer-btn').forEach(btn => {
     btn.disabled = true;
@@ -1138,21 +1067,33 @@ function evaluateAnswer() {
   } else {
     wrongCount++;
     p.mistakes++;
-    p.consecutive = 0;
+    p.consecutive = 0; // Explicitly reset streak on error
     p.lastWrong = new Date().toISOString();
     updateSpacedRepetition(p, false);
 
-    // Record error category
     const errType = q.error_type || 'general_grammar';
     state.errors[errType] = (state.errors[errType] || 0) + 1;
+
+    // Record in Recent Mistakes log
+    state.recentMistakes.unshift({
+      question: q.text,
+      chosen: selectedOption,
+      correct: q.correct,
+      date: todayStr
+    });
+    if (state.recentMistakes.length > 5) state.recentMistakes.pop();
     saveState();
 
     const ruleInfo = rules.find(r => r[0] === q.rule);
     const explanation = ruleInfo ? ruleInfo[2] : '';
     $('feedbackText').className = 'feedback-box feedback-wrong';
-    $('feedbackText').innerHTML = `❌ Correct Answer: <b>${q.correct}</b><br><span style="font-size:13px">${explanation}</span>`;
+    $('feedbackText').innerHTML = `
+      <div style="font-size:14px;margin-bottom:4px">❌ You chose: <b>${selectedOption}</b></div>
+      <div style="font-size:14px;margin-bottom:4px">✅ Correct: <b>${q.correct}</b></div>
+      <div style="font-size:13px;line-height:1.4">${explanation}</div>
+    `;
 
-    // Interleave Retry: insert 2-3 questions down if under 3 appearances
+    // Interleave Retry: insert 2-3 questions down
     const appearances = sessionSeenCount[q.id] || 1;
     if (appearances < 3) {
       const gap = 2 + Math.floor(Math.random() * 2);
@@ -1160,11 +1101,10 @@ function evaluateAnswer() {
       queue.splice(insertAt, 0, q);
     }
 
-    // Approach 1: Transform primary button into acknowledgment trigger (No auto-advance)
+    // Approach 1: Convert submit button to acknowledgement trigger
     const submitBtn = $('submitBtn');
     submitBtn.textContent = 'I UNDERSTAND / GOT IT! →';
     submitBtn.style.background = 'var(--neon-pink)';
-    
     submitBtn.onclick = () => {
       pos++;
       if (pos >= queue.length) finishQuiz();
@@ -1182,9 +1122,7 @@ function finishQuiz() {
   $('resCorrect').textContent = correctCount;
   $('resWrong').textContent = wrongCount;
 
-  // Feedback categorisation
-  let strongRules = [];
-  let weakRules = [];
+  let strongRules = [], weakRules = [];
   rules.forEach(r => {
     if (isRuleMastered(r[0])) strongRules.push(r[1]);
     else {
@@ -1196,7 +1134,6 @@ function finishQuiz() {
   $('resStrong').textContent = strongRules.length ? strongRules.slice(0,2).join(', ') : 'Building foundation';
   $('resWeak').textContent = weakRules.length ? weakRules.slice(0,2).join(', ') : 'None! Keep advancing';
 
-  // Count reviews due tomorrow
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomStr = tomorrow.toISOString().slice(0,10);
@@ -1223,20 +1160,56 @@ function renderParentDashboard() {
   $('pQuestions').textContent = totalQ;
   $('pStreak').textContent = `${state.streak} Days`;
 
-  // Error type breakdown
-  const errorKeys = Object.keys(state.errors);
-  if (errorKeys.length === 0) {
-    $('errorAnalysisList').innerHTML = '<i>No recurring mistakes recorded yet.</i>';
+  // 1. Weakest 3 Skills
+  const ruleRanked = rules.map(r => ({
+    name: r[1],
+    stats: ruleStats(r[0])
+  })).filter(r => r.stats.attempts > 0)
+    .sort((a,b) => a.stats.accuracy - b.stats.accuracy)
+    .slice(0, 3);
+
+  if (ruleRanked.length === 0) {
+    $('weakSkillsList').innerHTML = '<i>No weak skills identified yet. Great progress!</i>';
   } else {
-    $('errorAnalysisList').innerHTML = errorKeys.map(k => {
-      const label = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      return `<div style="display:flex;justify-content:space-between;padding:3px 0">
-        <span>${label}</span><b>${state.errors[k]} mistake${state.errors[k] > 1 ? 's' : ''}</b>
-      </div>`;
+    $('weakSkillsList').innerHTML = ruleRanked.map(r => `
+      <div style="display:flex;justify-content:space-between;padding:4px 0">
+        <span>${r.name}</span>
+        <b>${Math.round(r.stats.accuracy * 100)}% accuracy</b>
+      </div>
+    `).join('');
+  }
+
+  // 2. Recent Mistakes
+  if (!state.recentMistakes || state.recentMistakes.length === 0) {
+    $('recentMistakesList').innerHTML = '<span style="font-size:12px;color:var(--text-muted)">No mistakes logged recently.</span>';
+  } else {
+    $('recentMistakesList').innerHTML = state.recentMistakes.map(m => `
+      <div class="recent-mistake-card">
+        <div><b>Q:</b> ${m.question}</div>
+        <div style="color:#95165c;margin-top:2px">❌ Chose: <b>${m.chosen}</b> | ✅ Correct: <b>${m.correct}</b></div>
+      </div>
+    `).join('');
+  }
+
+  // 3. Learning Trend (Past 7 Days)
+  const historyKeys = Object.keys(state.dailyHistory).sort().slice(-7);
+  if (historyKeys.length === 0) {
+    $('trendList').innerHTML = '<span style="font-size:12px;color:var(--text-muted)">Practice daily to generate accuracy trends.</span>';
+  } else {
+    $('trendList').innerHTML = historyKeys.map(k => {
+      const d = state.dailyHistory[k];
+      const acc = d.attempts ? Math.round((d.correct / d.attempts) * 100) : 0;
+      return `
+        <div class="trend-bar-row">
+          <span style="width:75px">${k.slice(5)}</span>
+          <div class="trend-track"><div class="trend-fill" style="width:${acc}%"></div></div>
+          <span style="width:38px;font-weight:700">${acc}%</span>
+        </div>
+      `;
     }).join('');
   }
 
-  // Principle performance
+  // Rule-by-rule breakdown
   $('parentRulesList').innerHTML = rules.map(r => {
     const s = ruleStats(r[0]);
     const mastered = isRuleMastered(r[0]);
@@ -1247,7 +1220,7 @@ function renderParentDashboard() {
       <div style="max-width:75%">
         <b style="font-size:13px">${r[1]}</b>
         <div style="font-size:11px;color:var(--text-muted);margin-top:2px">
-          ${s.attemptedQs}/${s.totalQuestions} questions • ${accPct}% accuracy • Hard cleared: ${s.hasHardCleared ? 'Yes ✓' : 'No ✗'}
+          ${s.attemptedQs}/${s.totalQuestions} Qs • ${accPct}% acc • Med/Hard cleared: ${s.hardClearedCount} • Streaks: ${s.activeStreaks}
         </div>
       </div>
       <span class="status ${mastered ? 'mastered' : (weak ? 'need' : 'learning')}">
@@ -1276,10 +1249,10 @@ $('loginBtn').onclick = () => {
 $('username').addEventListener('keydown', e => { if (e.key === 'Enter') $('pin').focus(); });
 $('pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
 
-$('startMissionBtn').onclick = () => startQuiz(null, "Daily Mission");
+$('startMissionBtn').onclick = () => startQuiz(null);
 $('submitBtn').onclick = evaluateAnswer;
 $('hintBtn').onclick = triggerHint;
-$('continueMissionBtn').onclick = () => startQuiz(null, "Daily Mission");
+$('continueMissionBtn').onclick = () => startQuiz(null);
 $('backHomeBtn').onclick = () => { renderDashboard(); showScreen('homeScreen'); };
 $('logoutBtn').onclick = () => showScreen('loginScreen');
 $('parentViewBtn').onclick = renderParentDashboard;
@@ -1299,9 +1272,9 @@ $('helpBtn').onclick = () => {
   $('rulebookBox').scrollIntoView({ behavior: 'smooth' });
 };
 
-$('forgotBtn').onclick = () => alert('PIN recovery will connect via Supabase.');
-$('createBtn').onclick = () => alert('Account creation will connect via Supabase.');
-$('settingsBtn').onclick = () => alert('Settings: Audio and Theme controls.');
+$('forgotBtn').onclick = () => alert('PIN recovery connects via Supabase.');
+$('createBtn').onclick = () => alert('Account creation connects via Supabase.');
+$('settingsBtn').onclick = () => alert('Settings: Audio & Sound Controls.');
 </script>
 </body>
 </html>
