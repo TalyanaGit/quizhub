@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Grammar Quest V8</title>
+<title>Grammar Quest V8 — Supabase Edition</title>
+<!-- Official Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --green-deep:#1a1447;
@@ -48,7 +50,7 @@ body{
 
 .hidden{display:none !important}
 
-/* Header */
+/* Top App Header */
 .app-header{
   background:linear-gradient(180deg, var(--green-deep), var(--green-main));
   color:#fff;
@@ -111,7 +113,7 @@ body{
   pointer-events:none;
 }
 
-/* Mission Sign */
+/* Signboard */
 .wood-sign-wrap{
   position:relative;
   margin:-42px 18px 16px;
@@ -281,7 +283,7 @@ button{font:inherit}
 .stat-card{background:var(--parchment);border:2px solid var(--parchment-border);border-radius:14px;padding:12px;text-align:center}
 .stat-card b{font-size:20px;display:block;color:var(--green-deep)}
 
-/* Daily Mission Box */
+/* Mission Box */
 .mission-box{
   background:linear-gradient(135deg, #241c5c 0%, #151033 100%);
   border:2px solid var(--neon-purple);
@@ -457,6 +459,7 @@ button{font:inherit}
         <g transform="translate(475,55)">
           <circle cx="0" cy="0" r="26" fill="#3ec9d6"/>
         </g>
+        <!-- Character -->
         <g transform="translate(210,55)">
           <ellipse cx="45" cy="110" rx="34" ry="42" fill="#3ec9d6"/>
           <circle cx="45" cy="42" r="36" fill="#241c5c"/>
@@ -488,10 +491,6 @@ button{font:inherit}
           <input class="quest-input" id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••">
         </div>
         <button class="btn-cta" id="loginBtn" type="button">START MY JOURNEY 🚀</button>
-        <div class="card-links">
-          <button class="text-link" id="forgotBtn" type="button">Forgot PIN?</button>
-          <button class="text-link" id="createBtn" type="button">Create Account</button>
-        </div>
       </div>
     </div>
   </section>
@@ -515,9 +514,9 @@ button{font:inherit}
       <div style="font-weight:900;font-size:15px;letter-spacing:1px;color:var(--gold-accent);margin-bottom:8px" id="missionSummaryTitle">
         🚀 TODAY'S MISSION (10 QUESTIONS)
       </div>
-      <div class="mission-row"><span>🎯 Weak-Skill Focus</span><b id="countWeak">4 questions</b></div>
-      <div class="mission-row"><span>🔄 Spaced Review</span><b id="countReview">3 questions</b></div>
-      <div class="mission-row"><span>🌟 New Challenges</span><b id="countNew">3 questions</b></div>
+      <div class="mission-row"><span>🎯 Weak-Skill Focus</span><b id="countWeak">0 questions</b></div>
+      <div class="mission-row"><span>🔄 Spaced Review</span><b id="countReview">0 questions</b></div>
+      <div class="mission-row"><span>🌟 New Challenges</span><b id="countNew">0 questions</b></div>
       <div style="margin-top:12px">
         <button class="btn-cta" id="startMissionBtn" type="button">START MISSION 🚀</button>
       </div>
@@ -558,7 +557,6 @@ button{font:inherit}
     
     <div class="question-text" id="questionText"></div>
 
-    <!-- Progressive Hint Component (Non-punitive) -->
     <div class="hint-container">
       <div class="hint-header">
         <div class="hint-badges">
@@ -615,19 +613,16 @@ button{font:inherit}
       <div class="stat-card"><b id="pStreak">0</b>Practice Streak</div>
     </div>
 
-    <!-- Weakest Skills Section -->
     <div style="margin-top:16px;background:#ffe9f3;border:2px solid var(--neon-pink);border-radius:14px;padding:14px">
       <h4 style="margin:0 0 6px;color:#95165c">🔴 Weakest Skills (Needs Focus)</h4>
       <div id="weakSkillsList" style="font-size:13px"></div>
     </div>
 
-    <!-- Recent Mistakes Log -->
     <div style="margin-top:16px;background:#fff;border:2px solid var(--parchment-border);border-radius:14px;padding:14px">
       <h4 style="margin:0 0 8px;color:var(--green-deep)">📝 Recent Mistakes</h4>
       <div id="recentMistakesList"></div>
     </div>
 
-    <!-- Learning Trend Section -->
     <div style="margin-top:16px;background:#fff;border:2px solid var(--parchment-border);border-radius:14px;padding:14px">
       <h4 style="margin:0 0 8px;color:var(--green-deep)">📈 Learning Trend (Last 7 Days)</h4>
       <div id="trendList"></div>
@@ -640,7 +635,12 @@ button{font:inherit}
 </main>
 
 <script>
-// 1. RULES DEFINITION
+// --- SUPABASE CLIENT INITIALIZATION ---
+const SUPABASE_URL = 'https://sfevtelcfyhhizklevyo.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmZXZ0ZWxjZnloaGl6a2xldnlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2ODg4NzEsImV4cCI6MjEwMjI2NDg3MX0.YvVRNWA_P4yz4rw9NWr-JN1iOTVcL4IUXp-wEnzRaNw';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// --- GRAMMAR QUEST ENGINE ---
 const rules = [
   ['subject', 'I / You / We / They + base verb', 'With I, you, we, and they, keep the verb in base form.', 'I play cricket. • They read books.'],
   ['third', 'He / She / It + s / es', 'With he, she, and it, the verb needs an -s or -es suffix.', 'He plays. • She watches.'],
@@ -652,176 +652,251 @@ const rules = [
 ];
 
 const RANKS = ['Cadet', 'Explorer', 'Navigator', 'Pilot', 'Ranger', 'Commander', 'Captain', 'Galaxy Master'];
-
-// 2. EXPANDED QUESTION BANK WITH REALISTIC MISCONCEPTION DISTRACTORS
-const questions = [
-  // Subject-Verb Agreement
-  { id: 'q01', text: 'They ___ football on Sundays.', options: ['play', 'plays', 'playing', 'are play'], correct: 'play', rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Look at the subject "They".', hint_2: 'Plural subjects do not add -s to the verb.', hint_3: 'Select "play".' },
-  { id: 'q02', text: 'I ___ milk every morning.', options: ['drink', 'drinks', 'drinking', 'am drink'], correct: 'drink', rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Look at the subject "I".', hint_2: 'With "I", use the plain base verb.', hint_3: 'Choose "drink".' },
-  { id: 'q03', text: 'You ___ very fast.', options: ['run', 'runs', 'running', 'is run'], correct: 'run', rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Subject is "You".', hint_2: 'You takes base verb without -s.', hint_3: 'Choose "run".' },
-  { id: 'q04', text: 'We ___ to the park on Fridays.', options: ['go', 'goes', 'going', 'gone'], correct: 'go', rule: 'subject', difficulty: 'medium', error_type: 'subject_verb_agreement', hint_1: '"We" refers to more than one person.', hint_2: 'Use base verb.', hint_3: 'Pick "go".' },
-
-  // Third Person Singular
-  { id: 'q05', text: 'He ___ to school every day.', options: ['goes', 'go', 'going', 'is go'], correct: 'goes', rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: 'Subject is singular "He".', hint_2: 'He/She/It verbs end in -s or -es.', hint_3: 'Pick "goes".' },
-  { id: 'q06', text: 'My father ___ the newspaper every morning.', options: ['reads', 'read', 'reading', 'is reads'], correct: 'reads', rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement', hint_1: '"My father" is singular (He).', hint_2: 'Add -s to read.', hint_3: 'Choose "reads".' },
-  { id: 'q07', text: 'She ___ her homework after dinner.', options: ['does', 'do', 'doing', 'is do'], correct: 'does', rule: 'third', difficulty: 'medium', error_type: 'subject_verb_agreement', hint_1: 'Subject is "She".', hint_2: 'Use does for third person.', hint_3: 'Select "does".' },
-  { id: 'q08', text: 'Aarav ___ tennis on weekends.', options: ['plays', 'play', 'playes', 'playing'], correct: 'plays', rule: 'third', difficulty: 'hard', error_type: 'subject_verb_agreement', hint_1: 'Aarav is a single person.', hint_2: 'Standard verbs ending in vowel+y take -s.', hint_3: 'Choose "plays".' },
-
-  // Do / Does Questions
-  { id: 'q09', text: '___ she like mangoes?', options: ['Does', 'Do', 'Is', 'Did'], correct: 'Does', rule: 'do', difficulty: 'easy', error_type: 'wrong_auxiliary', hint_1: 'Subject is "she".', hint_2: 'He/She/It takes "Does".', hint_3: 'Select "Does".' },
-  { id: 'q10', text: 'Do they ___ English?', options: ['speak', 'speaks', 'speaking', 'spoke'], correct: 'speak', rule: 'do', difficulty: 'medium', error_type: 'verb_form_after_aux', hint_1: 'The sentence already has "Do".', hint_2: 'The main verb must be base form.', hint_3: 'Choose "speak".' },
-  { id: 'q11', text: '___ the shop open at 9 am?', options: ['Does', 'Do', 'Is', 'Are'], correct: 'Does', rule: 'do', difficulty: 'hard', error_type: 'wrong_auxiliary', hint_1: '"The shop" is singular (It).', hint_2: 'Singular nouns take Does.', hint_3: 'Select "Does".' },
-  { id: 'q12', text: '___ Priya and Rohan play chess?', options: ['Do', 'Does', 'Is', 'Are'], correct: 'Do', rule: 'do', difficulty: 'hard', error_type: 'wrong_auxiliary', hint_1: 'Priya and Rohan are two people (They).', hint_2: 'Plural subjects take Do.', hint_3: 'Pick "Do".' },
-
-  // Negation (Don't / Doesn't)
-  { id: 'q13', text: 'We ___ watch TV in the morning.', options: ["don't", "doesn't", "not", "no"], correct: "don't", rule: 'negative', difficulty: 'easy', error_type: 'wrong_negation', hint_1: 'Subject is "We".', hint_2: 'Plural takes don\'t.', hint_3: 'Select "don\'t".' },
-  { id: 'q14', text: 'She ___ play tennis.', options: ["doesn't", "don't", "not", "isn't"], correct: "doesn't", rule: 'negative', difficulty: 'medium', error_type: 'wrong_negation', hint_1: 'Subject is "She".', hint_2: 'Third person uses doesn\'t.', hint_3: 'Select "doesn\'t".' },
-  { id: 'q15', text: 'My brother ___ football.', options: ["doesn't like", "don't like", "doesn't likes", "don't likes"], correct: "doesn't like", rule: 'negative', difficulty: 'hard', error_type: 'compound_negation', hint_1: 'My brother is singular (He).', hint_2: 'Use doesn\'t + base verb.', hint_3: 'Pick "doesn\'t like".' },
-  { id: 'q16', text: 'These birds ___ migrate in winter.', options: ["don't", "doesn't", "no", "not"], correct: "don't", rule: 'negative', difficulty: 'hard', error_type: 'wrong_negation', hint_1: '"These birds" is plural (They).', hint_2: 'Plural subjects use don\'t.', hint_3: 'Choose "don\'t".' },
-
-  // Base Verb after Auxiliaries
-  { id: 'q17', text: "Riya doesn't ___ coffee.", options: ['like', 'likes', 'liking', 'liked'], correct: 'like', rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux', hint_1: 'Notice "doesn\'t".', hint_2: 'After doesn\'t, verb stays base.', hint_3: 'Choose "like".' },
-  { id: 'q18', text: 'Does Amit ___ cricket?', options: ['play', 'plays', 'playing', 'played'], correct: 'play', rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux', hint_1: 'The sentence starts with "Does".', hint_2: 'Does takes the -s; main verb stays base.', hint_3: 'Pick "play".' },
-  { id: 'q19', text: 'Does she ___ to school by bus?', options: ['go', 'goes', 'going', 'went'], correct: 'go', rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux', hint_1: 'The auxiliary "Does" is already present.', hint_2: 'Keep verb in base form.', hint_3: 'Select "go".' },
-  { id: 'q20', text: 'Does the train ___ on platform 2?', options: ['arrive', 'arrives', 'arriving', 'arrived'], correct: 'arrive', rule: 'base', difficulty: 'hard', error_type: 'verb_form_after_aux', hint_1: 'Look at "Does".', hint_2: 'Base verb only.', hint_3: 'Choose "arrive".' },
-
-  // Spelling Rules
-  { id: 'q21', text: 'He ___ TV every evening.', options: ['watches', 'watch', 'watchs', 'watching'], correct: 'watches', rule: 'spelling', difficulty: 'easy', error_type: 'spelling_rule', hint_1: 'Verb ends in -ch.', hint_2: 'Add -es to verbs ending in -ch.', hint_3: 'Pick "watches".' },
-  { id: 'q22', text: 'Rahul ___ his teeth twice a day.', options: ['brushes', 'brush', 'brushs', 'brushing'], correct: 'brushes', rule: 'spelling', difficulty: 'easy', error_type: 'spelling_rule', hint_1: 'Verb ends in -sh.', hint_2: 'Add -es for third person.', hint_3: 'Choose "brushes".' },
-  { id: 'q23', text: 'The teacher ___ English.', options: ['teaches', 'teach', 'teachs', 'teaching'], correct: 'teaches', rule: 'spelling', difficulty: 'medium', error_type: 'spelling_rule', hint_1: '"Teach" ends in -ch.', hint_2: 'Add -es for singular subjects.', hint_3: 'Pick "teaches".' },
-  { id: 'q24', text: 'She ___ English every day.', options: ['studies', 'study', 'studys', 'studying'], correct: 'studies', rule: 'spelling', difficulty: 'hard', error_type: 'spelling_rule', hint_1: '"Study" ends in consonant + y.', hint_2: 'Change -y to -ies.', hint_3: 'Choose "studies".' },
-  { id: 'q25', text: 'He ___ his bag to school.', options: ['carries', 'carry', 'carrys', 'carrying'], correct: 'carries', rule: 'spelling', difficulty: 'hard', error_type: 'spelling_rule', hint_1: '"Carry" has consonant + y.', hint_2: 'Change -y to -ies.', hint_3: 'Pick "carries".' },
-
-  // Facts & Habits
-  { id: 'q26', text: 'The sun ___ in the east.', options: ['rises', 'rise', 'rising', 'rose'], correct: 'rises', rule: 'uses', difficulty: 'easy', error_type: 'universal_fact', hint_1: 'Permanent scientific fact.', hint_2: 'The sun is singular (It).', hint_3: 'Pick "rises".' },
-  { id: 'q27', text: 'Water ___ at 100°C.', options: ['boils', 'boil', 'boiling', 'boiled'], correct: 'boils', rule: 'uses', difficulty: 'easy', error_type: 'universal_fact', hint_1: 'Universal fact.', hint_2: 'Uncountable noun takes -s.', hint_3: 'Select "boils".' },
-  { id: 'q28', text: 'Birds ___ in the sky.', options: ['fly', 'flies', 'flying', 'flew'], correct: 'fly', rule: 'uses', difficulty: 'medium', error_type: 'subject_verb_agreement', hint_1: '"Birds" is plural.', hint_2: 'Plural takes base verb.', hint_3: 'Choose "fly".' }
-];
-
-// 3. PERSISTENCE & SCHEDULING MODEL
 const INTERVAL_SCHEDULE = [1, 3, 7, 14, 30];
 
-let state = JSON.parse(localStorage.getItem('gq-v8') || '{}');
-if (!state.q) state.q = {};
-if (!state.errors) state.errors = {};
-if (!state.recentMistakes) state.recentMistakes = [];
-if (!state.streak) state.streak = 0;
-if (!state.lastPracticeDate) state.lastPracticeDate = null;
-if (!state.dailyHistory) state.dailyHistory = {};
-
-function saveState() {
-  localStorage.setItem('gq-v8', JSON.stringify(state));
-}
-
-function getQuestionState(id) {
-  if (!state.q[id]) {
-    state.q[id] = {
-      attempts: 0,
-      mistakes: 0,
-      consecutive: 0,
-      lastAttempted: null,
-      lastWrong: null,
-      repLevel: 0,
-      nextReview: null
-    };
+class LearningEngine {
+  constructor(userId) {
+    this.userId = userId;
+    this.questionBank = [];
+    this.userProgress = {};
+    this.streak = 0;
+    this.lastPracticeDate = null;
+    this.recentMistakes = [];
+    this.dailyHistory = {};
   }
-  return state.q[id];
-}
 
-function updateSpacedRepetition(p, isCorrect) {
-  const now = new Date();
-  if (isCorrect) {
-    p.repLevel = Math.min(p.repLevel + 1, INTERVAL_SCHEDULE.length);
-    const daysToAdd = INTERVAL_SCHEDULE[p.repLevel - 1] || 30;
-    const nextDate = new Date();
-    nextDate.setDate(now.getDate() + daysToAdd);
-    p.nextReview = nextDate.toISOString().slice(0,10);
-  } else {
-    p.repLevel = Math.max(1, p.repLevel - 1);
-    const nextDate = new Date();
-    nextDate.setDate(now.getDate() + 1);
-    p.nextReview = nextDate.toISOString().slice(0,10);
+  getLocalDateString(d = new Date()) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
-}
 
-// Rigorous Mastery Calculation
-function ruleStats(ruleKey) {
-  const qs = questions.filter(q => q.rule === ruleKey);
-  let attempts = 0, mistakes = 0, attemptedQs = 0, activeStreaks = 0, hardClearedCount = 0;
+  calculateNextReviewDate(currentDateStr, days) {
+    const [y, m, d] = currentDateStr.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    date.setDate(date.getDate() + days);
+    return this.getLocalDateString(date);
+  }
 
-  qs.forEach(q => {
-    const p = state.q[q.id];
-    if (p && p.attempts > 0) {
-      attempts += p.attempts;
-      mistakes += p.mistakes;
-      attemptedQs++;
-      if (p.consecutive >= 3) activeStreaks++;
-      if ((q.difficulty === 'medium' || q.difficulty === 'hard') && p.consecutive >= 1) {
-        hardClearedCount++;
+  async hydrate() {
+    // 1. Fetch Question Bank
+    const { data: qData, error: qErr } = await db.from('questions').select('*');
+    if (qErr) throw qErr;
+    this.questionBank = qData || [];
+
+    // 2. Fetch User Question Progress
+    const { data: pData, error: pErr } = await db.from('user_question_progress').select('*').eq('user_id', this.userId);
+    if (pErr) throw pErr;
+    this.userProgress = {};
+    (pData || []).forEach(row => { this.userProgress[row.question_id] = row; });
+
+    // 3. Fetch Historical Quiz Results
+    const { data: rData, error: rErr } = await db.from('user_quiz_results').select('*').eq('user_id', this.userId).order('local_date', { ascending: true });
+    if (rErr) throw rErr;
+    
+    this.dailyHistory = {};
+    (rData || []).forEach(r => {
+      if (!this.dailyHistory[r.local_date]) {
+        this.dailyHistory[r.local_date] = { attempts: 0, correct: 0 };
       }
+      this.dailyHistory[r.local_date].attempts += r.total_questions;
+      this.dailyHistory[r.local_date].correct += r.correct_count;
+    });
+
+    // 4. Calculate Streak
+    const dates = Object.keys(this.dailyHistory).sort();
+    if (dates.length > 0) {
+      this.lastPracticeDate = dates[dates.length - 1];
+      let streakCount = 1;
+      for (let i = dates.length - 1; i > 0; i--) {
+        const curr = new Date(dates[i]);
+        const prev = new Date(dates[i - 1]);
+        const diff = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
+        if (diff === 1) streakCount++;
+        else break;
+      }
+      this.streak = streakCount;
     }
-  });
+  }
 
-  const accuracy = attempts ? (attempts - mistakes) / attempts : 0;
-  return { totalQuestions: qs.length, attemptedQs, attempts, mistakes, accuracy, activeStreaks, hardClearedCount };
-}
-
-function isRuleMastered(ruleKey) {
-  const s = ruleStats(ruleKey);
-  // Redesigned: >= 5 distinct Qs, >= 85% accuracy, >= 3 active streaks, >= 2 medium/hard cleared
-  return s.attemptedQs >= 5 && s.accuracy >= 0.85 && s.activeStreaks >= 3 && s.hardClearedCount >= 2;
-}
-
-// 4. DYNAMIC ADAPTIVE QUEUE BUILDER
-function getDailyMissionDistribution() {
-  const todayStr = new Date().toISOString().slice(0,10);
-  let reviewPool = [], weakPool = [], newPool = [];
-
-  questions.forEach(q => {
-    const p = state.q[q.id];
-    if (!p || p.attempts === 0) {
-      newPool.push(q);
-    } else if (p.nextReview && p.nextReview <= todayStr) {
-      reviewPool.push(q);
-    } else if (p.mistakes > 0 && (p.attempts - p.mistakes) / p.attempts < 0.75) {
-      weakPool.push(q);
-    } else {
-      reviewPool.push(q);
+  getProgress(questionId) {
+    if (!this.userProgress[questionId]) {
+      this.userProgress[questionId] = {
+        user_id: this.userId,
+        question_id: questionId,
+        attempts: 0,
+        mistakes: 0,
+        consecutive_correct: 0,
+        last_attempted: null,
+        last_wrong: null,
+        rep_level: 0,
+        next_review_date: null
+      };
     }
-  });
+    return this.userProgress[questionId];
+  }
 
-  return { reviewPool, weakPool, newPool };
-}
+  getRuleStats(ruleKey) {
+    const ruleQuestions = this.questionBank.filter(q => q.rule_key === ruleKey);
+    let totalAttempts = 0, totalMistakes = 0, attemptedQuestions = 0, activeStreaks = 0, hardClearedCount = 0;
 
-function buildQuizQueue(focusRule = null) {
-  const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+    ruleQuestions.forEach(q => {
+      const p = this.userProgress[q.id];
+      if (p && p.attempts > 0) {
+        totalAttempts += p.attempts;
+        totalMistakes += p.mistakes;
+        attemptedQuestions++;
+        if (p.consecutive_correct >= 3) activeStreaks++;
+        if ((q.difficulty === 'medium' || q.difficulty === 'hard') && p.consecutive_correct >= 1) {
+          hardClearedCount++;
+        }
+      }
+    });
 
-  if (focusRule) {
-    const rulePool = questions.filter(q => q.rule === focusRule);
+    const accuracy = totalAttempts > 0 ? (totalAttempts - totalMistakes) / totalAttempts : 0;
     return {
-      queue: shuffle(rulePool),
-      title: `Practice Mission — ${rulePool.length} Questions`
+      totalQuestions: ruleQuestions.length,
+      attemptedQuestions,
+      totalAttempts,
+      totalMistakes,
+      accuracy,
+      activeStreaks,
+      hardClearedCount
     };
   }
 
-  const { reviewPool, weakPool, newPool } = getDailyMissionDistribution();
-  const pickedReview = shuffle(reviewPool).slice(0, 3);
-  const pickedWeak = shuffle(weakPool).slice(0, 4);
-  const pickedNew = shuffle(newPool).slice(0, 3);
-
-  let combined = [...pickedReview, ...pickedWeak, ...pickedNew];
-  if (combined.length < 10) {
-    const remaining = shuffle(questions.filter(q => !combined.some(c => c.id === q.id)));
-    combined = combined.concat(remaining.slice(0, 10 - combined.length));
+  isRuleMastered(ruleKey) {
+    const s = this.getRuleStats(ruleKey);
+    return (
+      s.attemptedQuestions >= 5 &&
+      s.accuracy >= 0.85 &&
+      s.activeStreaks >= 3 &&
+      s.hardClearedCount >= 2
+    );
   }
 
-  return {
-    queue: shuffle(combined),
-    title: `Today's Mission — ${combined.length} Questions`
-  };
+  getDailyDistribution() {
+    const today = this.getLocalDateString();
+    const reviewPool = [], weakPool = [], newPool = [];
+
+    this.questionBank.forEach(q => {
+      const p = this.userProgress[q.id];
+      if (!p || p.attempts === 0) {
+        newPool.push(q);
+      } else if (p.next_review_date && p.next_review_date <= today) {
+        reviewPool.push(q);
+      } else {
+        const acc = (p.attempts - p.mistakes) / p.attempts;
+        if (acc < 0.75 || p.consecutive_correct === 0) {
+          weakPool.push(q);
+        } else {
+          reviewPool.push(q);
+        }
+      }
+    });
+
+    return { reviewPool, weakPool, newPool };
+  }
+
+  buildQuizQueue(focusRule = null) {
+    const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+
+    if (focusRule) {
+      const rulePool = this.questionBank.filter(q => q.rule_key === focusRule);
+      return {
+        queue: shuffle(rulePool),
+        title: `Practice Mission — ${rulePool.length} Questions`
+      };
+    }
+
+    const { reviewPool, weakPool, newPool } = this.getDailyDistribution();
+    const pickedReview = shuffle(reviewPool).slice(0, 3);
+    const pickedWeak = shuffle(weakPool).slice(0, 4);
+    const pickedNew = shuffle(newPool).slice(0, 3);
+
+    let combined = [...pickedReview, ...pickedWeak, ...pickedNew];
+    if (combined.length < 10) {
+      const existingIds = new Set(combined.map(q => q.id));
+      const remaining = shuffle(this.questionBank.filter(q => !existingIds.has(q.id)));
+      combined = combined.concat(remaining.slice(0, 10 - combined.length));
+    }
+
+    return {
+      queue: shuffle(combined),
+      title: `Today's Mission — ${combined.length} Questions`
+    };
+  }
+
+  async processAnswer(question, chosenOption) {
+    const isCorrect = chosenOption === question.correct;
+    const progress = this.getProgress(question.id);
+    const today = this.getLocalDateString();
+    const nowIso = new Date().toISOString();
+
+    progress.attempts += 1;
+    progress.last_attempted = nowIso;
+
+    if (isCorrect) {
+      progress.consecutive_correct += 1;
+      progress.rep_level = Math.min(progress.rep_level + 1, INTERVAL_SCHEDULE.length);
+      const days = INTERVAL_SCHEDULE[progress.rep_level - 1];
+      progress.next_review_date = this.calculateNextReviewDate(today, days);
+    } else {
+      progress.mistakes += 1;
+      progress.consecutive_correct = 0;
+      progress.last_wrong = nowIso;
+      progress.rep_level = Math.max(1, progress.rep_level - 1);
+      progress.next_review_date = this.calculateNextReviewDate(today, 1);
+
+      this.recentMistakes.unshift({
+        question: question.text,
+        chosen: chosenOption,
+        correct: question.correct
+      });
+      if (this.recentMistakes.length > 5) this.recentMistakes.pop();
+    }
+
+    // Persist progress to Supabase
+    await db.from('user_question_progress').upsert({
+      user_id: this.userId,
+      question_id: question.id,
+      attempts: progress.attempts,
+      mistakes: progress.mistakes,
+      consecutive_correct: progress.consecutive_correct,
+      last_attempted: progress.last_attempted,
+      last_wrong: progress.last_wrong,
+      rep_level: progress.rep_level,
+      next_review_date: progress.next_review_date,
+      updated_at: nowIso
+    });
+
+    return {
+      isCorrect,
+      ruleMastered: this.isRuleMastered(question.rule_key)
+    };
+  }
+
+  async logQuizResult(total, correct, wrong, errorSummary) {
+    const today = this.getLocalDateString();
+    await db.from('user_quiz_results').insert({
+      user_id: this.userId,
+      local_date: today,
+      total_questions: total,
+      correct_count: correct,
+      wrong_count: wrong,
+      error_summary: errorSummary
+    });
+
+    if (!this.dailyHistory[today]) this.dailyHistory[today] = { attempts: 0, correct: 0 };
+    this.dailyHistory[today].attempts += total;
+    this.dailyHistory[today].correct += correct;
+    this.streak = (this.streak || 0) + 1;
+  }
 }
 
-// 5. RUNTIME CONTROLLER
+// --- APP RUNTIME & UI CONTROLLER ---
+let engine = null;
 let queue = [];
 let pos = 0;
 let score = 0;
@@ -831,36 +906,18 @@ let selectedOption = null;
 let locked = false;
 let hintStep = 0;
 let sessionSeenCount = {};
+let errorSummary = {};
 
 const $ = id => document.getElementById(id);
 
 function showScreen(id) {
   ['loginScreen', 'homeScreen', 'quizScreen', 'resultScreen', 'parentScreen'].forEach(s => $(s).classList.add('hidden'));
   $(id).classList.remove('hidden');
-  window.scrollTo(0,0);
-}
-
-function updateStreak() {
-  const todayStr = new Date().toISOString().slice(0,10);
-  if (!state.lastPracticeDate) {
-    state.streak = 1;
-    state.lastPracticeDate = todayStr;
-  } else if (state.lastPracticeDate !== todayStr) {
-    const last = new Date(state.lastPracticeDate);
-    const current = new Date(todayStr);
-    const diffDays = Math.round((current - last) / (1000 * 60 * 60 * 24));
-    if (diffDays === 1) {
-      state.streak += 1;
-    } else if (diffDays > 1) {
-      state.streak = 1;
-    }
-    state.lastPracticeDate = todayStr;
-  }
-  saveState();
+  window.scrollTo(0, 0);
 }
 
 function renderDashboard() {
-  const masteredCount = rules.filter(r => isRuleMastered(r[0])).length;
+  const masteredCount = rules.filter(r => engine.isRuleMastered(r[0])).length;
   const rankIdx = Math.min(masteredCount, RANKS.length - 1);
   const currentRank = RANKS[rankIdx];
 
@@ -870,14 +927,13 @@ function renderDashboard() {
   $('rankTitle').textContent = `${currentRank} Explorer`;
   $('masteryFill').style.width = Math.round((masteredCount / rules.length) * 100) + '%';
 
-  if (state.streak > 0) {
-    $('streakBanner').textContent = `🌟 Great work — ${state.streak} day${state.streak > 1 ? 's' : ''} of practice!`;
+  if (engine.streak > 0) {
+    $('streakBanner').textContent = `🌟 Great work — ${engine.streak} day${engine.streak > 1 ? 's' : ''} of practice!`;
   } else {
     $('streakBanner').textContent = '🌟 Start your mission streak today!';
   }
 
-  // Calculate dynamic queue distribution for today
-  const { reviewPool, weakPool, newPool } = getDailyMissionDistribution();
+  const { reviewPool, weakPool, newPool } = engine.getDailyDistribution();
   const cRev = Math.min(reviewPool.length, 3);
   const cWeak = Math.min(weakPool.length, 4);
   const cNew = Math.min(newPool.length, 3);
@@ -888,24 +944,24 @@ function renderDashboard() {
   $('countReview').textContent = `${cRev} questions`;
   $('countNew').textContent = `${cNew} questions`;
 
-  const todayStr = new Date().toISOString().slice(0,10);
-  const today = state.today || { date: todayStr, questions: 0, correct: 0, improved: 0 };
-  $('todayQuestions').textContent = today.questions;
-  $('todayCorrect').textContent = today.correct;
-  $('todayAccuracy').textContent = (today.questions ? Math.round((today.correct / today.questions) * 100) : 0) + '%';
-  $('todayImproved').textContent = today.improved;
+  const todayStr = engine.getLocalDateString();
+  const todayStats = engine.dailyHistory[todayStr] || { attempts: 0, correct: 0 };
+  $('todayQuestions').textContent = todayStats.attempts;
+  $('todayCorrect').textContent = todayStats.correct;
+  $('todayAccuracy').textContent = (todayStats.attempts ? Math.round((todayStats.correct / todayStats.attempts) * 100) : 0) + '%';
+  $('todayImproved').textContent = masteredCount;
 
-  // Interactive Learning Map
+  // Interactive Map Cards
   $('mapList').innerHTML = rules.map(r => {
-    const s = ruleStats(r[0]);
-    const mastered = isRuleMastered(r[0]);
-    const attempted = s.attempts > 0;
+    const s = engine.getRuleStats(r[0]);
+    const mastered = engine.isRuleMastered(r[0]);
+    const attempted = s.totalAttempts > 0;
     const weak = attempted && s.accuracy < 0.7;
     const cls = mastered ? 'mastered' : (weak ? 'need' : 'learning');
     const status = mastered ? 'MASTERED' : (weak ? 'PRACTICE' : (attempted ? 'IN PROGRESS' : 'NEW'));
     const sub = mastered 
       ? 'Grammar skill mastered ⭐' 
-      : (weak ? 'Needs practice • Tap to focus' : (attempted ? `${Math.round(s.accuracy*100)}% accuracy (${s.attemptedQs}/${s.totalQuestions} Qs)` : 'Tap to start learning'));
+      : (weak ? 'Needs practice • Tap to focus' : (attempted ? `${Math.round(s.accuracy * 100)}% accuracy (${s.attemptedQuestions}/${s.totalQuestions} Qs)` : 'Tap to start learning'));
     const dot = mastered ? '✓' : (weak ? '!' : '•');
 
     return `<div class="map-card ${cls}" data-rule="${r[0]}">
@@ -931,20 +987,21 @@ function renderDashboard() {
 }
 
 function startQuiz(focusRule = null) {
-  const mission = buildQuizQueue(focusRule);
+  const mission = engine.buildQuizQueue(focusRule);
   queue = mission.queue;
   pos = 0;
   score = 0;
   correctCount = 0;
   wrongCount = 0;
   sessionSeenCount = {};
+  errorSummary = {};
   $('quizModeLabel').textContent = mission.title;
   showScreen('quizScreen');
   renderQuestion();
 }
 
 function renderHints() {
-  ['hb1','hb2','hb3'].forEach((id, idx) => {
+  ['hb1', 'hb2', 'hb3'].forEach((id, idx) => {
     if (idx < hintStep) $(id).classList.add('active');
     else $(id).classList.remove('active');
   });
@@ -981,7 +1038,8 @@ function renderQuestion() {
   submitBtn.style.background = '';
   submitBtn.onclick = evaluateAnswer;
 
-  $('answersGrid').innerHTML = [...q.options].sort(() => Math.random() - 0.5).map(opt =>
+  const rawOpts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
+  $('answersGrid').innerHTML = [...rawOpts].sort(() => Math.random() - 0.5).map(opt =>
     `<button class="answer-btn" data-v="${opt.replace(/"/g, '&quot;')}">${opt}</button>`
   ).join('');
 
@@ -1001,17 +1059,13 @@ function triggerHint() {
   hintStep++;
 
   $('hintContent').classList.remove('hidden');
-  if (hintStep === 1) {
-    $('hintContent').innerHTML = `<b>Concept Clue:</b> ${q.hint_1}`;
-  } else if (hintStep === 2) {
-    $('hintContent').innerHTML = `<b>Rule Reminder:</b> ${q.hint_2}`;
-  } else {
-    $('hintContent').innerHTML = `<b>Answer Helper:</b> ${q.hint_3}`;
-  }
+  if (hintStep === 1) $('hintContent').innerHTML = `<b>Concept Clue:</b> ${q.hint_1}`;
+  else if (hintStep === 2) $('hintContent').innerHTML = `<b>Rule Reminder:</b> ${q.hint_2}`;
+  else $('hintContent').innerHTML = `<b>Answer Helper:</b> ${q.hint_3}`;
   renderHints();
 }
 
-function evaluateAnswer() {
+async function evaluateAnswer() {
   if (locked) return;
   if (!selectedOption) {
     alert('Please choose an answer first.');
@@ -1019,23 +1073,7 @@ function evaluateAnswer() {
   }
   locked = true;
   const q = queue[pos];
-  const p = getQuestionState(q.id);
-  const wasRuleMasteredBefore = isRuleMastered(q.rule);
   const isCorrect = selectedOption === q.correct;
-
-  // Track session attempts & daily trend
-  let todayStr = new Date().toISOString().slice(0,10);
-  let today = state.today || { date: todayStr, questions: 0, correct: 0, improved: 0 };
-  if (today.date !== todayStr) today = { date: todayStr, questions: 0, correct: 0, improved: 0 };
-  today.questions++;
-  if (isCorrect) today.correct++;
-  state.today = today;
-
-  if (!state.dailyHistory[todayStr]) {
-    state.dailyHistory[todayStr] = { attempts: 0, correct: 0 };
-  }
-  state.dailyHistory[todayStr].attempts++;
-  if (isCorrect) state.dailyHistory[todayStr].correct++;
 
   document.querySelectorAll('.answer-btn').forEach(btn => {
     btn.disabled = true;
@@ -1043,22 +1081,12 @@ function evaluateAnswer() {
     if (!isCorrect && btn.dataset.v === selectedOption) btn.classList.add('wrong');
   });
 
-  p.attempts++;
-  p.lastAttempted = new Date().toISOString();
   sessionSeenCount[q.id] = (sessionSeenCount[q.id] || 0) + 1;
+  const res = await engine.processAnswer(q, selectedOption);
 
   if (isCorrect) {
     score++;
     correctCount++;
-    p.consecutive++;
-    updateSpacedRepetition(p, true);
-    saveState();
-
-    if (!wasRuleMasteredBefore && isRuleMastered(q.rule)) {
-      state.today.improved++;
-      saveState();
-    }
-
     setTimeout(() => {
       pos++;
       if (pos >= queue.length) finishQuiz();
@@ -1066,25 +1094,10 @@ function evaluateAnswer() {
     }, 450);
   } else {
     wrongCount++;
-    p.mistakes++;
-    p.consecutive = 0; // Explicitly reset streak on error
-    p.lastWrong = new Date().toISOString();
-    updateSpacedRepetition(p, false);
+    const err = q.error_type || 'general_grammar';
+    errorSummary[err] = (errorSummary[err] || 0) + 1;
 
-    const errType = q.error_type || 'general_grammar';
-    state.errors[errType] = (state.errors[errType] || 0) + 1;
-
-    // Record in Recent Mistakes log
-    state.recentMistakes.unshift({
-      question: q.text,
-      chosen: selectedOption,
-      correct: q.correct,
-      date: todayStr
-    });
-    if (state.recentMistakes.length > 5) state.recentMistakes.pop();
-    saveState();
-
-    const ruleInfo = rules.find(r => r[0] === q.rule);
+    const ruleInfo = rules.find(r => r[0] === q.rule_key);
     const explanation = ruleInfo ? ruleInfo[2] : '';
     $('feedbackText').className = 'feedback-box feedback-wrong';
     $('feedbackText').innerHTML = `
@@ -1093,15 +1106,13 @@ function evaluateAnswer() {
       <div style="font-size:13px;line-height:1.4">${explanation}</div>
     `;
 
-    // Interleave Retry: insert 2-3 questions down
-    const appearances = sessionSeenCount[q.id] || 1;
-    if (appearances < 3) {
+    // Wrong-Answer Rescue Loop (interleave 2-3 questions ahead)
+    if (sessionSeenCount[q.id] < 3) {
       const gap = 2 + Math.floor(Math.random() * 2);
       const insertAt = Math.min(pos + 1 + gap, queue.length);
       queue.splice(insertAt, 0, q);
     }
 
-    // Approach 1: Convert submit button to acknowledgement trigger
     const submitBtn = $('submitBtn');
     submitBtn.textContent = 'I UNDERSTAND / GOT IT! →';
     submitBtn.style.background = 'var(--neon-pink)';
@@ -1113,8 +1124,9 @@ function evaluateAnswer() {
   }
 }
 
-function finishQuiz() {
-  updateStreak();
+async function finishQuiz() {
+  await engine.logQuizResult(correctCount + wrongCount, correctCount, wrongCount, errorSummary);
+
   const total = correctCount + wrongCount;
   const pct = total ? Math.round((correctCount / total) * 100) : 0;
   
@@ -1124,22 +1136,22 @@ function finishQuiz() {
 
   let strongRules = [], weakRules = [];
   rules.forEach(r => {
-    if (isRuleMastered(r[0])) strongRules.push(r[1]);
+    if (engine.isRuleMastered(r[0])) strongRules.push(r[1]);
     else {
-      const st = ruleStats(r[0]);
-      if (st.attempts > 0 && st.accuracy < 0.7) weakRules.push(r[1]);
+      const st = engine.getRuleStats(r[0]);
+      if (st.totalAttempts > 0 && st.accuracy < 0.7) weakRules.push(r[1]);
     }
   });
 
-  $('resStrong').textContent = strongRules.length ? strongRules.slice(0,2).join(', ') : 'Building foundation';
-  $('resWeak').textContent = weakRules.length ? weakRules.slice(0,2).join(', ') : 'None! Keep advancing';
+  $('resStrong').textContent = strongRules.length ? strongRules.slice(0, 2).join(', ') : 'Building foundation';
+  $('resWeak').textContent = weakRules.length ? weakRules.slice(0, 2).join(', ') : 'None! Keep advancing';
 
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomStr = tomorrow.toISOString().slice(0,10);
+  const tomStr = engine.getLocalDateString(tomorrow);
   let dueCount = 0;
-  Object.values(state.q).forEach(q => {
-    if (q.nextReview && q.nextReview <= tomStr) dueCount++;
+  Object.values(engine.userProgress).forEach(q => {
+    if (q.next_review_date && q.next_review_date <= tomStr) dueCount++;
   });
   $('resReviewCount').textContent = dueCount;
 
@@ -1147,25 +1159,25 @@ function finishQuiz() {
 }
 
 function renderParentDashboard() {
-  const masteredCount = rules.filter(r => isRuleMastered(r[0])).length;
+  const masteredCount = rules.filter(r => engine.isRuleMastered(r[0])).length;
   let totalQ = 0, totalC = 0;
   rules.forEach(r => {
-    const s = ruleStats(r[0]);
-    totalQ += s.attempts;
-    totalC += s.attempts - s.mistakes;
+    const s = engine.getRuleStats(r[0]);
+    totalQ += s.totalAttempts;
+    totalC += s.totalAttempts - s.totalMistakes;
   });
 
   $('pMastery').textContent = `${masteredCount}/${rules.length}`;
   $('pAccuracy').textContent = (totalQ ? Math.round((totalC / totalQ) * 100) : 0) + '%';
   $('pQuestions').textContent = totalQ;
-  $('pStreak').textContent = `${state.streak} Days`;
+  $('pStreak').textContent = `${engine.streak} Days`;
 
-  // 1. Weakest 3 Skills
+  // Weakest Skills
   const ruleRanked = rules.map(r => ({
     name: r[1],
-    stats: ruleStats(r[0])
-  })).filter(r => r.stats.attempts > 0)
-    .sort((a,b) => a.stats.accuracy - b.stats.accuracy)
+    stats: engine.getRuleStats(r[0])
+  })).filter(r => r.stats.totalAttempts > 0)
+    .sort((a, b) => a.stats.accuracy - b.stats.accuracy)
     .slice(0, 3);
 
   if (ruleRanked.length === 0) {
@@ -1179,11 +1191,11 @@ function renderParentDashboard() {
     `).join('');
   }
 
-  // 2. Recent Mistakes
-  if (!state.recentMistakes || state.recentMistakes.length === 0) {
+  // Recent Mistakes
+  if (!engine.recentMistakes || engine.recentMistakes.length === 0) {
     $('recentMistakesList').innerHTML = '<span style="font-size:12px;color:var(--text-muted)">No mistakes logged recently.</span>';
   } else {
-    $('recentMistakesList').innerHTML = state.recentMistakes.map(m => `
+    $('recentMistakesList').innerHTML = engine.recentMistakes.map(m => `
       <div class="recent-mistake-card">
         <div><b>Q:</b> ${m.question}</div>
         <div style="color:#95165c;margin-top:2px">❌ Chose: <b>${m.chosen}</b> | ✅ Correct: <b>${m.correct}</b></div>
@@ -1191,13 +1203,13 @@ function renderParentDashboard() {
     `).join('');
   }
 
-  // 3. Learning Trend (Past 7 Days)
-  const historyKeys = Object.keys(state.dailyHistory).sort().slice(-7);
+  // Learning Trend
+  const historyKeys = Object.keys(engine.dailyHistory).sort().slice(-7);
   if (historyKeys.length === 0) {
     $('trendList').innerHTML = '<span style="font-size:12px;color:var(--text-muted)">Practice daily to generate accuracy trends.</span>';
   } else {
     $('trendList').innerHTML = historyKeys.map(k => {
-      const d = state.dailyHistory[k];
+      const d = engine.dailyHistory[k];
       const acc = d.attempts ? Math.round((d.correct / d.attempts) * 100) : 0;
       return `
         <div class="trend-bar-row">
@@ -1209,22 +1221,22 @@ function renderParentDashboard() {
     }).join('');
   }
 
-  // Rule-by-rule breakdown
+  // Rule Breakdown
   $('parentRulesList').innerHTML = rules.map(r => {
-    const s = ruleStats(r[0]);
-    const mastered = isRuleMastered(r[0]);
-    const weak = s.attempts > 0 && s.accuracy < 0.7;
-    const accPct = s.attempts ? Math.round(s.accuracy * 100) : 0;
+    const s = engine.getRuleStats(r[0]);
+    const mastered = engine.isRuleMastered(r[0]);
+    const weak = s.totalAttempts > 0 && s.accuracy < 0.7;
+    const accPct = s.totalAttempts ? Math.round(s.accuracy * 100) : 0;
     
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #ece4fb">
       <div style="max-width:75%">
         <b style="font-size:13px">${r[1]}</b>
         <div style="font-size:11px;color:var(--text-muted);margin-top:2px">
-          ${s.attemptedQs}/${s.totalQuestions} Qs • ${accPct}% acc • Med/Hard cleared: ${s.hardClearedCount} • Streaks: ${s.activeStreaks}
+          ${s.attemptedQuestions}/${s.totalQuestions} Qs • ${accPct}% acc • Med/Hard: ${s.hardClearedCount} • Streaks: ${s.activeStreaks}
         </div>
       </div>
       <span class="status ${mastered ? 'mastered' : (weak ? 'need' : 'learning')}">
-        ${mastered ? 'MASTERED' : (weak ? 'WEAK' : (s.attempts ? 'LEARNING' : 'NEW'))}
+        ${mastered ? 'MASTERED' : (weak ? 'WEAK' : (s.totalAttempts ? 'LEARNING' : 'NEW'))}
       </span>
     </div>`;
   }).join('');
@@ -1232,18 +1244,46 @@ function renderParentDashboard() {
   showScreen('parentScreen');
 }
 
-// 6. EVENT BINDINGS
-$('loginBtn').onclick = () => {
-  const u = $('username').value.trim();
-  const p = $('pin').value.trim();
-  if (!u || !/^[0-9]{4,6}$/.test(p)) {
-    alert('Please enter an explorer username and a 4–6 digit numeric PIN.');
+// --- EVENT HANDLERS ---
+$('loginBtn').onclick = async () => {
+  const username = $('username').value.trim().toLowerCase();
+  const pin = $('pin').value.trim();
+
+  if (!username || !/^[0-9]{4,6}$/.test(pin)) {
+    alert('Please enter a username and a 4–6 digit numeric PIN.');
     return;
   }
-  state.username = u;
-  saveState();
-  renderDashboard();
-  showScreen('homeScreen');
+
+  // Generate deterministic Supabase auth credentials from username + PIN
+  const email = `${username}@grammarquest.local`;
+  const password = `GQ_${pin}_SECURE!`;
+
+  $('loginBtn').disabled = true;
+  $('loginBtn').textContent = 'CONNECTING MISSION...';
+
+  try {
+    // 1. Try Signing In
+    let { data: authData, error: authError } = await db.auth.signInWithPassword({ email, password });
+    
+    // 2. If user doesn't exist, create the explorer account
+    if (authError) {
+      const { data: signUpData, error: signUpError } = await db.auth.signUp({ email, password });
+      if (signUpError) throw signUpError;
+      authData = signUpData;
+    }
+
+    const userId = authData.user.id;
+    engine = new LearningEngine(userId);
+    await engine.hydrate();
+
+    renderDashboard();
+    showScreen('homeScreen');
+  } catch (err) {
+    alert('Login error: ' + (err.message || 'Could not connect to Supabase.'));
+  } finally {
+    $('loginBtn').disabled = false;
+    $('loginBtn').textContent = 'START MY JOURNEY 🚀';
+  }
 };
 
 $('username').addEventListener('keydown', e => { if (e.key === 'Enter') $('pin').focus(); });
@@ -1254,7 +1294,10 @@ $('submitBtn').onclick = evaluateAnswer;
 $('hintBtn').onclick = triggerHint;
 $('continueMissionBtn').onclick = () => startQuiz(null);
 $('backHomeBtn').onclick = () => { renderDashboard(); showScreen('homeScreen'); };
-$('logoutBtn').onclick = () => showScreen('loginScreen');
+$('logoutBtn').onclick = async () => {
+  await db.auth.signOut();
+  showScreen('loginScreen');
+};
 $('parentViewBtn').onclick = renderParentDashboard;
 $('closeParentBtn').onclick = () => { renderDashboard(); showScreen('homeScreen'); };
 
@@ -1262,8 +1305,8 @@ $('helpBtn').onclick = () => {
   const currentQ = queue[pos];
   $('rulebookBox').innerHTML = `<h4 style="margin:0 0 8px;color:var(--green-deep)">🛰️ Simple Present Mission Manual</h4>` + 
     rules.map(r => `
-      <div class="rule-item" style="${r[0] === currentQ.rule ? 'background:#e8f4ec;padding:6px;border-radius:6px;' : ''}">
-        <b>${r[1]} ${r[0] === currentQ.rule ? '⭐ Relevant' : ''}</b>
+      <div class="rule-item" style="${r[0] === currentQ.rule_key ? 'background:#e8f4ec;padding:6px;border-radius:6px;' : ''}">
+        <b>${r[1]} ${r[0] === currentQ.rule_key ? '⭐ Relevant' : ''}</b>
         <div>${r[2]}</div>
         <div style="color:var(--text-muted)">${r[3]}</div>
       </div>
@@ -1272,9 +1315,7 @@ $('helpBtn').onclick = () => {
   $('rulebookBox').scrollIntoView({ behavior: 'smooth' });
 };
 
-$('forgotBtn').onclick = () => alert('PIN recovery connects via Supabase.');
-$('createBtn').onclick = () => alert('Account creation connects via Supabase.');
-$('settingsBtn').onclick = () => alert('Settings: Audio & Sound Controls.');
+$('settingsBtn').onclick = () => alert('Grammar Quest Engine V8 — Cloud Synced.');
 </script>
 </body>
 </html>
