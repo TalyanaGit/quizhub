@@ -1,0 +1,1303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Grammar Quest V7</title>
+<style>
+:root{
+  --green-deep:#1a1447;
+  --green-main:#2d2470;
+  --green-bright:#4a3aa8;
+  --wood-border:#c0348a;
+  --wood-bg:#e0449c;
+  --wood-light:#f26fb5;
+  --parchment:#f5f0ff;
+  --parchment-border:#d8cdf5;
+  --gold-accent:#ffcc33;
+  --gold-shadow:#e6a800;
+  --text-dark:#211a4a;
+  --text-muted:#6c63a3;
+  --space-navy:#151033;
+  --space-navy-deep:#0d0a24;
+  --neon-pink:#ff4fa3;
+  --neon-teal:#3ec9d6;
+  --neon-purple:#8a5cf6;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;
+  background:var(--space-navy-deep);
+  font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  color:var(--text-dark);
+  display:flex;
+  justify-content:center;
+}
+
+.book{
+  width:100%;
+  max-width:540px;
+  min-height:100vh;
+  background:#f3effc;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  box-shadow:0 0 35px rgba(0,0,0,.6);
+}
+
+.hidden{display:none !important}
+
+/* Top App Header */
+.app-header{
+  background:linear-gradient(180deg, var(--green-deep), var(--green-main));
+  color:#fff;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:3px solid #162e1e;
+}
+.brand-badge{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:900;
+  font-size:17px;
+  letter-spacing:0.5px;
+  color:#fcfaf2;
+  text-shadow:0 1px 3px rgba(0,0,0,.4);
+}
+.brand-icon{font-size:20px}
+.header-actions{display:flex;align-items:center;gap:12px}
+.avatar-badge{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#ead7a4;
+  border:2px solid #fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  box-shadow:0 2px 5px rgba(0,0,0,.25);
+}
+.icon-btn{
+  background:none;
+  border:0;
+  color:#dbe7df;
+  font-size:20px;
+  cursor:pointer;
+  padding:4px;
+  display:flex;
+  align-items:center;
+}
+
+/* Illustrated Scene Banner */
+.scene-container{
+  position:relative;
+  width:100%;
+  height:210px;
+  background:radial-gradient(ellipse at 30% 20%, #241c5c 0%, var(--space-navy) 45%, var(--space-navy-deep) 100%);
+  overflow:hidden;
+  border-bottom:3px solid var(--neon-purple);
+}
+.scene-svg{
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+/* Mission Control Panel */
+.wood-sign-wrap{
+  position:relative;
+  margin:-42px 18px 16px;
+  z-index:10;
+}
+.wood-sign{
+  background:linear-gradient(180deg, var(--green-bright) 0%, var(--green-main) 60%, var(--green-deep) 100%);
+  border:3px solid var(--neon-purple);
+  border-radius:18px;
+  padding:16px 14px 14px;
+  text-align:center;
+  box-shadow:0 8px 20px rgba(138,92,246,.35), inset 0 2px 0 rgba(255,255,255,.15);
+  position:relative;
+}
+.wood-sign::before, .wood-sign::after{
+  content:'';
+  position:absolute;
+  top:8px;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--neon-pink);
+  box-shadow:0 0 6px var(--neon-pink), inset 0 1px 1px rgba(255,255,255,.6);
+}
+.wood-sign::before{left:10px}
+.wood-sign::after{right:10px}
+
+.sign-small{
+  color:var(--neon-teal);
+  font-weight:900;
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  text-shadow:0 1px 2px rgba(0,0,0,.6);
+}
+.sign-title{
+  color:#ffffff;
+  font-family:Georgia,serif;
+  font-size:25px;
+  font-weight:900;
+  margin:4px 0 2px;
+  text-shadow:0 2px 10px rgba(255,79,163,.6);
+}
+.sign-sub{
+  color:#e6dcff;
+  font-size:12px;
+  font-weight:600;
+  margin-top:2px;
+}
+
+/* Badges */
+.rank-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#241a63;
+  border:2px solid var(--neon-teal);
+  color:#fff;
+  padding:8px 16px;
+  border-radius:20px;
+  font-weight:900;
+  font-size:16px;
+  margin:10px auto;
+  box-shadow:0 0 12px rgba(62,201,214,.4);
+}
+
+/* Login Card */
+.content-body{
+  padding:0 18px 24px;
+  flex:1;
+}
+.quest-card{
+  background:var(--parchment);
+  border:2px solid var(--parchment-border);
+  border-radius:18px;
+  padding:20px 18px;
+  box-shadow:0 4px 10px rgba(0,0,0,.06);
+}
+.quest-card-title{
+  font-size:16px;
+  font-weight:900;
+  color:var(--green-main);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.form-group{margin-bottom:14px}
+.form-group label{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:var(--text-muted);
+  margin-bottom:6px;
+}
+.quest-input{
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  font-family:inherit;
+  font-weight:600;
+  color:var(--text-dark);
+  background:#fff;
+  border:2px solid #c9b8f0;
+  border-radius:12px;
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+}
+.quest-input:focus{
+  border-color:var(--green-bright);
+  box-shadow:0 0 0 3px rgba(74,58,168,.25);
+}
+
+.btn-cta{
+  width:100%;
+  padding:16px;
+  font-size:17px;
+  font-weight:900;
+  letter-spacing:0.5px;
+  color:#fff;
+  background:linear-gradient(180deg, #f9c038 0%, var(--gold-shadow) 100%);
+  border:2px solid #b87a05;
+  border-radius:14px;
+  cursor:pointer;
+  box-shadow:0 5px 0 #9c6803, 0 8px 12px rgba(0,0,0,.15);
+  text-shadow:0 1px 2px rgba(0,0,0,.3);
+  transition:transform .1s, box-shadow .1s;
+}
+.btn-cta:active{
+  transform:translateY(3px);
+  box-shadow:0 2px 0 #9c6803, 0 4px 6px rgba(0,0,0,.15);
+}
+
+.card-links{
+  display:flex;
+  justify-content:space-between;
+  margin-top:16px;
+  padding-top:12px;
+  border-top:1px dashed #d8cdf5;
+}
+.text-link{
+  background:none;
+  border:0;
+  color:var(--neon-purple);
+  font-weight:700;
+  font-size:13px;
+  cursor:pointer;
+  padding:4px;
+}
+
+/* Layout Utilities */
+button{font:inherit}
+.primary{background:var(--green-main);color:#fff;border:0;border-radius:12px;padding:13px;font-weight:700;cursor:pointer}
+.secondary{background:#e3d9fa;color:var(--text-dark);border:0;border-radius:12px;padding:13px;font-weight:700;cursor:pointer}
+.help{background:#dbeaff;color:#1f4e8c;border:0;border-radius:12px;padding:13px;font-weight:700;cursor:pointer}
+.wide{width:100%;margin-top:10px}
+
+/* Dashboard Specifics */
+.dash-wrap{padding:18px}
+.journey-hero{background:#e5defa;padding:18px;border-radius:18px;text-align:center;margin-bottom:18px;border:2px solid var(--parchment-border)}
+.journey-hero h1{font:900 28px Georgia,serif;margin:4px 0;color:var(--green-deep)}
+.smallcaps{font-size:11px;letter-spacing:2px;font-weight:800;color:var(--text-muted)}
+.mastery-track{height:12px;background:#d8cdf5;border-radius:20px;overflow:hidden;margin-top:10px}
+.mastery-fill{height:100%;width:0;background:linear-gradient(90deg,var(--neon-purple),var(--neon-pink));transition:width .5s ease}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.stat-card{background:var(--parchment);border:2px solid var(--parchment-border);border-radius:14px;padding:12px;text-align:center}
+.stat-card b{font-size:20px;display:block;color:var(--green-deep)}
+
+/* Daily Mission Box */
+.mission-box{
+  background:linear-gradient(135deg, #241c5c 0%, #151033 100%);
+  border:2px solid var(--neon-purple);
+  border-radius:16px;
+  padding:16px;
+  color:#fff;
+  margin-bottom:18px;
+  box-shadow:0 6px 16px rgba(138,92,246,.25);
+}
+.mission-row{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.map-path{display:grid;gap:10px;margin-top:10px}
+.map-card{
+  background:var(--parchment);
+  border:2px solid var(--parchment-border);
+  border-radius:14px;
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  transition:transform .1s ease, border-color .2s;
+}
+.map-card:active{transform:scale(0.98)}
+.map-card .dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;background:#e3d9fa;flex:none}
+.map-card.mastered{border-color:var(--neon-teal);background:#e2fbf9}
+.map-card.mastered .dot{background:#c6f3ee}
+.map-card.learning{border-color:var(--gold-accent);background:#fff8dc}
+.map-card.need{border-color:var(--neon-pink);background:#ffe9f3}
+.map-card .status{margin-left:auto;font-size:11px;padding:4px 8px;border-radius:12px;font-weight:800}
+.status.mastered{background:#c6f3ee;color:#0f5f57}
+.status.learning{background:#ffecb3;color:#7a5a00}
+.status.need{background:#ffd2e6;color:#95165c}
+
+/* Quiz Specifics */
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.score-pill{background:#e5defa;padding:6px 12px;border-radius:20px;font-weight:900;color:var(--green-deep)}
+.progress-bar-wrap{height:8px;background:#e0d5f7;border-radius:10px;margin:10px 0 16px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--neon-purple),var(--neon-pink))}
+.question-text{font:900 22px Georgia,serif;line-height:1.35;margin:16px 0 12px;color:var(--green-deep)}
+
+/* Progressive Hints */
+.hint-container{
+  margin:10px 0 16px;
+  background:#fff8e7;
+  border:2px solid #f0d9a8;
+  border-radius:14px;
+  padding:12px 14px;
+}
+.hint-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.hint-hearts{font-size:16px;letter-spacing:2px}
+.heart-used{opacity:0.25}
+.hint-btn{
+  background:linear-gradient(180deg,#ffcc33,#e6a800);
+  border:1px solid #b87a05;
+  color:#3a2800;
+  font-weight:800;
+  font-size:12px;
+  padding:6px 12px;
+  border-radius:16px;
+  cursor:pointer;
+}
+.hint-btn:disabled{opacity:0.4;cursor:not-allowed}
+.hint-content{
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px dashed #e0ca96;
+  font-size:13px;
+  color:#593d07;
+  font-weight:600;
+}
+
+.answers-grid{display:grid;gap:10px}
+.answer-btn{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  text-align:left;
+  background:#fdfaff;
+  border:2px solid #d8cdf5;
+  padding:14px;
+  border-radius:12px;
+  font-size:17px;
+  font-weight:700;
+  cursor:pointer;
+}
+.answer-btn.selected{background:#efe8fd;border-color:var(--neon-purple)}
+.answer-btn.correct{background:#c6f3ee;border-color:var(--neon-teal);color:#0f5f57}
+.answer-btn.wrong{background:#ffd2e6;border-color:var(--neon-pink);color:#95165c}
+
+.feedback-box{min-height:30px;padding:8px 0;font-weight:bold}
+.feedback-box.feedback-wrong{
+  background:#ffe9f3;
+  border:2px solid var(--neon-pink);
+  border-radius:12px;
+  padding:12px 14px;
+  color:#95165c;
+  font-weight:600;
+  line-height:1.4;
+  font-size:14px;
+}
+.rulebook-drawer{margin-top:14px;padding:14px;background:#fff;border:2px solid #d8cdf5;border-radius:14px}
+.rule-item{padding:8px 0;border-bottom:1px solid #ece4fb;font-size:13px}
+</style>
+</head>
+<body>
+
+<main class="book">
+
+  <!-- TOP BRAND HEADER -->
+  <header class="app-header">
+    <div class="brand-badge">
+      <span class="brand-icon">🚀</span>
+      <span>GRAMMAR QUEST</span>
+    </div>
+    <div class="header-actions">
+      <div class="avatar-badge" title="Explorer Avatar">🦖</div>
+      <button class="icon-btn" id="settingsBtn" title="Settings">⚙️</button>
+    </div>
+  </header>
+
+  <!-- 1. LOGIN SCREEN -->
+  <section id="loginScreen">
+    <div class="scene-container">
+      <svg class="scene-svg" viewBox="0 0 540 210" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#ffcc33">
+          <polygon points="60,30 63,38 71,38 64,43 67,51 60,46 53,51 56,43 49,38 57,38"/>
+          <polygon points="300,20 302,26 308,26 303,29 305,35 300,31 295,35 297,29 292,26 298,26"/>
+          <polygon points="470,50 472,56 478,56 473,59 475,65 470,61 465,65 467,59 462,56 468,56"/>
+        </g>
+        <g fill="#ff4fa3">
+          <circle cx="30" cy="70" r="3"/><circle cx="150" cy="45" r="2.4"/><circle cx="410" cy="140" r="3"/>
+        </g>
+        <g fill="#3ec9d6">
+          <circle cx="90" cy="20" r="2"/><circle cx="250" cy="70" r="2.4"/><circle cx="350" cy="30" r="2"/>
+        </g>
+        <g transform="translate(58,45)">
+          <ellipse cx="0" cy="0" rx="34" ry="12" fill="none" stroke="#ffcc33" stroke-width="3" opacity="0.85" transform="rotate(-15)"/>
+          <circle cx="0" cy="0" r="20" fill="#ff8a3c"/>
+        </g>
+        <g transform="translate(475,55)">
+          <circle cx="0" cy="0" r="26" fill="#3ec9d6"/>
+        </g>
+        <!-- Astronaut Character -->
+        <g transform="translate(210,55)">
+          <ellipse cx="45" cy="110" rx="34" ry="42" fill="#3ec9d6"/>
+          <circle cx="45" cy="42" r="36" fill="#241c5c"/>
+          <circle cx="45" cy="42" r="30" fill="#150f3d"/>
+          <ellipse cx="47" cy="46" rx="21" ry="17" fill="#3ec9d6"/>
+          <circle cx="38" cy="40" r="7" fill="#fff"/><circle cx="39" cy="41" r="3.4" fill="#151033"/>
+          <circle cx="59" cy="42" r="2.6" fill="#151033"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="wood-sign-wrap">
+      <div class="wood-sign">
+        <div class="sign-small">YOUR GRAMMAR MISSION</div>
+        <div class="sign-title">Begins Here!</div>
+        <div class="sign-sub">Learn rules. Master skills. Rank up your rank.</div>
+      </div>
+    </div>
+
+    <div class="content-body">
+      <div class="quest-card">
+        <div class="quest-card-title">🚀 Explorer Login</div>
+        <div class="form-group">
+          <label for="username">EXPLORER USERNAME</label>
+          <input class="quest-input" id="username" type="text" autocomplete="username" placeholder="e.g. Arya">
+        </div>
+        <div class="form-group">
+          <label for="pin">SECRET 4–6 DIGIT PIN</label>
+          <input class="quest-input" id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••">
+        </div>
+        <button class="btn-cta" id="loginBtn" type="button">START MY JOURNEY 🚀</button>
+        <div class="card-links">
+          <button class="text-link" id="forgotBtn" type="button">Forgot PIN?</button>
+          <button class="text-link" id="createBtn" type="button">Create Account</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. CHILD DASHBOARD -->
+  <section id="homeScreen" class="dash-wrap hidden">
+    <div class="journey-hero">
+      <div class="smallcaps">EXPLORER RANK</div>
+      <div class="rank-badge" id="rankBadge">👨‍🚀 Cadet</div>
+      <h1 id="rankTitle">Cadet Explorer</h1>
+      <div style="font-weight:700;font-size:16px;color:var(--neon-purple)">Simple Present Master Track</div>
+      <div style="margin-top:14px;font-weight:800;font-size:15px">
+        <span id="mastered">0</span> / <span id="totalRules">7</span> Principles Mastered
+      </div>
+      <div class="mastery-track"><div class="mastery-fill" id="masteryFill"></div></div>
+      <div id="streakBanner" style="margin-top:12px;font-weight:800;font-size:13px;color:#7a5a00"></div>
+    </div>
+
+    <!-- Daily Mission Card -->
+    <div class="mission-box">
+      <div style="font-weight:900;font-size:15px;letter-spacing:1px;color:var(--gold-accent);margin-bottom:8px">
+        🚀 TODAY'S MISSION (10 QUESTIONS)
+      </div>
+      <div class="mission-row"><span>🎯 Weak-Skill Focus</span><b>4 questions</b></div>
+      <div class="mission-row"><span>🔄 Spaced Review</span><b>3 questions</b></div>
+      <div class="mission-row"><span>🌟 New Challenges</span><b>3 questions</b></div>
+      <div style="margin-top:12px">
+        <button class="btn-cta" id="startMissionBtn" type="button">START MISSION 🚀</button>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="margin:0 0 10px;color:var(--green-deep)">⭐ TODAY'S STATS</h3>
+      <div class="stats-grid">
+        <div class="stat-card"><b id="todayQuestions">0</b>Questions</div>
+        <div class="stat-card"><b id="todayCorrect">0</b>Correct</div>
+        <div class="stat-card"><b id="todayAccuracy">0%</b>Accuracy</div>
+        <div class="stat-card"><b id="todayImproved">0</b>Rules Upgraded</div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px">
+      <h3 style="margin:0 0 10px;color:var(--green-deep)">🗺️ INTERACTIVE LEARNING MAP</h3>
+      <div class="map-path" id="mapList"></div>
+    </div>
+
+    <div style="margin-top:24px;background:#eee5cb;border-radius:14px;padding:14px;text-align:center">
+      <h3 style="margin:0 0 6px;color:var(--green-deep)">🪐 NEXT RANK PROMOTION</h3>
+      <p id="nextRankText" style="margin:0;font-size:13px;color:var(--text-dark)"></p>
+    </div>
+
+    <button class="secondary wide" id="parentViewBtn" type="button" style="margin-top:20px">👨‍🚀 PARENT DASHBOARD & DIAGNOSTICS</button>
+    <button class="secondary wide" id="logoutBtn" type="button">Log out</button>
+  </section>
+
+  <!-- 3. QUIZ SCREEN -->
+  <section id="quizScreen" class="dash-wrap hidden">
+    <div class="quiz-header">
+      <span style="font-weight:800;color:var(--green-main)" id="quizModeLabel">Daily Mission</span>
+      <div class="score-pill">Score: <span id="scoreVal">0</span></div>
+    </div>
+    <div style="font-size:13px;font-weight:700;color:var(--text-muted)" id="progressVal">Question 1 of 10</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+    
+    <div class="question-text" id="questionText"></div>
+
+    <!-- Progressive Hint Component -->
+    <div class="hint-container">
+      <div class="hint-header">
+        <div class="hint-hearts" id="hintHearts">❤️❤️❤️</div>
+        <button class="hint-btn" id="hintBtn" type="button">💡 Need Help? (Tier 1)</button>
+      </div>
+      <div class="hint-content hidden" id="hintContent"></div>
+    </div>
+
+    <div class="answers-grid" id="answersGrid"></div>
+    <div class="feedback-box" id="feedbackText"></div>
+
+    <button class="primary wide" id="submitBtn" type="button" style="padding:16px;font-size:16px">SUBMIT ANSWER →</button>
+    <button class="help wide" id="helpBtn" type="button">🛰️ MISSION MANUAL (RULES)</button>
+    <div id="rulebookBox" class="rulebook-drawer hidden"></div>
+  </section>
+
+  <!-- 4. RESULT SCREEN -->
+  <section id="resultScreen" class="dash-wrap hidden">
+    <div class="journey-hero">
+      <div class="smallcaps">MISSION SUMMARY</div>
+      <h1 id="resultHeading">🚀 Mission Complete!</h1>
+      <div style="font-size:48px;font-weight:900;color:var(--green-deep);margin:10px 0" id="resultPct">0%</div>
+      <div class="stats-grid">
+        <div class="stat-card"><b id="resCorrect">0</b>⭐ Correct</div>
+        <div class="stat-card"><b id="resWrong">0</b>❌ Mistakes</div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:2px solid var(--parchment-border);border-radius:14px;padding:14px;margin-bottom:16px;font-size:14px">
+      <div style="margin-bottom:8px"><b>🟢 Strong Areas:</b> <span id="resStrong">None</span></div>
+      <div style="margin-bottom:8px"><b>🔴 Needs Practice:</b> <span id="resWeak">None</span></div>
+      <div><b>📅 Tomorrow:</b> <span id="resReviewCount">0</span> review items scheduled.</div>
+    </div>
+
+    <button class="btn-cta" id="continueMissionBtn" type="button" style="margin-bottom:10px">CONTINUE LEARNING</button>
+    <button class="secondary wide" id="backHomeBtn" type="button">RETURN TO MAP</button>
+  </section>
+
+  <!-- 5. PARENT DASHBOARD -->
+  <section id="parentScreen" class="dash-wrap hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="margin:0;color:var(--green-deep)">📊 Parent Diagnostics & Error Analysis</h3>
+      <button class="text-link" id="closeParentBtn" type="button">← Child View</button>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card"><b id="pMastery">0/7</b>Rules Mastered</div>
+      <div class="stat-card"><b id="pAccuracy">0%</b>Overall Accuracy</div>
+      <div class="stat-card"><b id="pQuestions">0</b>Total Attempts</div>
+      <div class="stat-card"><b id="pStreak">0</b>Practice Streak</div>
+    </div>
+
+    <div style="margin-top:20px;background:#ffe9f3;border:2px solid var(--neon-pink);border-radius:14px;padding:14px">
+      <h4 style="margin:0 0 6px;color:#95165c">⚠️ Error Type Diagnostic</h4>
+      <div id="errorAnalysisList" style="font-size:13px;color:var(--text-dark)"></div>
+    </div>
+
+    <h4 style="margin:20px 0 10px;color:var(--green-deep)">Rule-by-Rule Mastery Depth</h4>
+    <div id="parentRulesList"></div>
+  </section>
+
+</main>
+
+<script>
+// 1. RULE REGISTRY
+const rules = [
+  ['subject', 'I / You / We / They + base verb', 'With I, you, we, and they, keep the verb in base form.', 'I play cricket. • They read books.'],
+  ['third', 'He / She / It + s / es', 'With he, she, and it, the verb needs an -s or -es suffix.', 'He plays. • She watches.'],
+  ['do', 'Do / Does in questions', 'Use do with I/you/we/they and does with he/she/it.', 'Do you play? • Does he play?'],
+  ['negative', "Don't / Doesn't", 'Use don’t with I/you/we/they and doesn’t with he/she/it.', 'They don’t play. • He doesn’t play.'],
+  ['base', "Base verb after does / doesn't", 'After does or doesn’t, the main verb stays in base form.', 'Does he play? (Not plays)'],
+  ['spelling', '-s, -es and -ies spelling', 'Verbs ending in ch/sh/ss/x/o take -es. Consonant + y becomes -ies.', 'watch → watches • fly → flies'],
+  ['uses', 'Universal facts & habits', 'Use Simple Present for permanent truths, routines, and habits.', 'Water boils at 100°C.']
+];
+
+// Space Theme Ranks
+const RANKS = ['Cadet', 'Explorer', 'Navigator', 'Pilot', 'Ranger', 'Commander', 'Captain', 'Galaxy Master'];
+
+// 2. QUESTION BANK (With metadata, difficulty, hints, and error classification)
+const questions = [
+  {
+    id: 'q01', text: 'He ___ to school every day.', options: ['go','goes','going','went'], correct: 'goes',
+    rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement',
+    hint_1: 'Who is doing the action? (He/She/It)',
+    hint_2: 'Singular third-person subjects need an -s or -es.',
+    hint_3: 'The base verb is "go", so add -es.'
+  },
+  {
+    id: 'q02', text: 'They ___ football on Sundays.', options: ['plays','play','playing','played'], correct: 'play',
+    rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement',
+    hint_1: 'Look at the subject "They". Is it singular or plural?',
+    hint_2: 'With I/You/We/They, do not add -s to the verb.',
+    hint_3: 'Select the plain base verb "play".'
+  },
+  {
+    id: 'q03', text: '___ she like mangoes?', options: ['Do','Does','Is','Did'], correct: 'Does',
+    rule: 'do', difficulty: 'medium', error_type: 'wrong_auxiliary',
+    hint_1: 'Check the subject: "she".',
+    hint_2: 'We use "Do" for plural/I/you, and "Does" for he/she/it.',
+    hint_3: 'Select "Does".'
+  },
+  {
+    id: 'q04', text: "Riya doesn't ___ coffee.", options: ['likes','like','liked','liking'], correct: 'like',
+    rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux',
+    hint_1: 'Notice the auxiliary word "doesn\'t".',
+    hint_2: 'After "does" or "doesn\'t", the main verb reverts to base form.',
+    hint_3: 'Do not add -s. Pick "like".'
+  },
+  {
+    id: 'q05', text: 'My father ___ the newspaper every morning.', options: ['read','reads','reading','readed'], correct: 'reads',
+    rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement',
+    hint_1: '"My father" can be replaced by "He".',
+    hint_2: 'He/She/It verbs end in -s.',
+    hint_3: 'Select "reads".'
+  },
+  {
+    id: 'q06', text: 'We ___ watch TV in the morning.', options: ['does','doesn’t','do','don’t'], correct: 'don’t',
+    rule: 'negative', difficulty: 'medium', error_type: 'wrong_negation',
+    hint_1: 'Check the subject "We".',
+    hint_2: 'Plural subjects use "don\'t", not "doesn\'t".',
+    hint_3: 'Select "don\'t".'
+  },
+  {
+    id: 'q07', text: 'Does Amit ___ cricket?', options: ['plays','play','playing','played'], correct: 'play',
+    rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux',
+    hint_1: 'The question starts with "Does".',
+    hint_2: 'The main verb must stay base form.',
+    hint_3: 'Choose "play".'
+  },
+  {
+    id: 'q08', text: 'The sun ___ in the east.', options: ['rise','rises','rising','rose'], correct: 'rises',
+    rule: 'uses', difficulty: 'easy', error_type: 'universal_fact',
+    hint_1: 'This is a permanent scientific fact.',
+    hint_2: '"The sun" is a singular noun (It).',
+    hint_3: 'Select "rises".'
+  },
+  {
+    id: 'q09', text: 'She ___ her homework after dinner.', options: ['do','does','doing','did'], correct: 'does',
+    rule: 'third', difficulty: 'easy', error_type: 'subject_verb_agreement',
+    hint_1: 'Subject is "She".',
+    hint_2: 'Add -es to the root verb "do".',
+    hint_3: 'Choose "does".'
+  },
+  {
+    id: 'q10', text: 'I ___ milk every morning.', options: ['drinks','drink','drinking','drank'], correct: 'drink',
+    rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement',
+    hint_1: 'Subject is "I".',
+    hint_2: 'I takes the base verb with no extra -s.',
+    hint_3: 'Choose "drink".'
+  },
+  {
+    id: 'q11', text: 'He ___ TV every evening.', options: ['watch','watches','watchs','watching'], correct: 'watches',
+    rule: 'spelling', difficulty: 'medium', error_type: 'spelling_rule',
+    hint_1: 'The verb ends in -ch.',
+    hint_2: 'Verbs ending in -ch add -es, not just -s.',
+    hint_3: 'Select "watches".'
+  },
+  {
+    id: 'q12', text: 'Do they ___ English?', options: ['speaks','speak','speaking','spoke'], correct: 'speak',
+    rule: 'do', difficulty: 'medium', error_type: 'verb_form_after_aux',
+    hint_1: 'Notice the question auxiliary "Do".',
+    hint_2: 'Use the simple base verb.',
+    hint_3: 'Select "speak".'
+  },
+  {
+    id: 'q13', text: 'My brother ___ football.', options: ["don't like","doesn't likes","doesn't like","not like"], correct: "doesn't like",
+    rule: 'negative', difficulty: 'hard', error_type: 'compound_negation',
+    hint_1: '"My brother" is singular (He).',
+    hint_2: 'Needs "doesn\'t" + the plain base verb.',
+    hint_3: 'Pick "doesn\'t like".'
+  },
+  {
+    id: 'q14', text: 'The teacher ___ English.', options: ['teach','teaches','teaching','taught'], correct: 'teaches',
+    rule: 'spelling', difficulty: 'medium', error_type: 'spelling_rule',
+    hint_1: '"Teach" ends in -ch.',
+    hint_2: 'Singular third-person takes -es.',
+    hint_3: 'Select "teaches".'
+  },
+  {
+    id: 'q15', text: 'Birds ___ in the sky.', options: ['flies','fly','flying','flew'], correct: 'fly',
+    rule: 'uses', difficulty: 'easy', error_type: 'subject_verb_agreement',
+    hint_1: '"Birds" is plural (They).',
+    hint_2: 'Plural nouns take the base verb.',
+    hint_3: 'Pick "fly".'
+  },
+  {
+    id: 'q16', text: 'Does she ___ to school by bus?', options: ['goes','go','going','went'], correct: 'go',
+    rule: 'base', difficulty: 'medium', error_type: 'verb_form_after_aux',
+    hint_1: '"Does" carries the third-person mark.',
+    hint_2: 'Keep the main verb in base form.',
+    hint_3: 'Select "go".'
+  },
+  {
+    id: 'q17', text: 'Rahul ___ his teeth twice a day.', options: ['brush','brushes','brushing','brushed'], correct: 'brushes',
+    rule: 'spelling', difficulty: 'easy', error_type: 'spelling_rule',
+    hint_1: '"Brush" ends in -sh.',
+    hint_2: 'Words ending in -sh add -es for singular subjects.',
+    hint_3: 'Pick "brushes".'
+  },
+  {
+    id: 'q18', text: 'You ___ very fast.', options: ['runs','run','running','ran'], correct: 'run',
+    rule: 'subject', difficulty: 'easy', error_type: 'subject_verb_agreement',
+    hint_1: 'The subject is "You".',
+    hint_2: 'You takes the plain verb without -s.',
+    hint_3: 'Choose "run".'
+  },
+  {
+    id: 'q19', text: 'She ___ play tennis.', options: ['do','does',"doesn't","don't"], correct: "doesn't",
+    rule: 'negative', difficulty: 'medium', error_type: 'wrong_negation',
+    hint_1: 'Subject is "She".',
+    hint_2: 'Negative auxiliary for she is "doesn\'t".',
+    hint_3: 'Select "doesn\'t".'
+  },
+  {
+    id: 'q20', text: 'Water ___ at 100°C.', options: ['boil','boils','boiling','boiled'], correct: 'boils',
+    rule: 'uses', difficulty: 'easy', error_type: 'universal_fact',
+    hint_1: 'Scientific truth with uncountable noun (It).',
+    hint_2: 'Uncountable nouns take singular verbs with -s.',
+    hint_3: 'Pick "boils".'
+  },
+  {
+    id: 'q21', text: 'She ___ English every day.', options: ['study','studies','studying','studied'], correct: 'studies',
+    rule: 'spelling', difficulty: 'hard', error_type: 'spelling_rule',
+    hint_1: 'The verb "study" ends in consonant + y.',
+    hint_2: 'Change -y to -i and add -es.',
+    hint_3: 'Select "studies".'
+  },
+  {
+    id: 'q22', text: 'Does the train ___ at platform 2?', options: ['arrive','arrives','arriving','arrived'], correct: 'arrive',
+    rule: 'base', difficulty: 'hard', error_type: 'verb_form_after_aux',
+    hint_1: 'Look at the sentence starter "Does".',
+    hint_2: 'Auxiliary takes the -s; the verb stays base.',
+    hint_3: 'Select "arrive".'
+  },
+  {
+    id: 'q23', text: 'He ___ his lunch box to school.', options: ['carry','carries','carrying','carried'], correct: 'carries',
+    rule: 'spelling', difficulty: 'hard', error_type: 'spelling_rule',
+    hint_1: '"Carry" ends in a consonant + y.',
+    hint_2: 'Drop the y and add -ies.',
+    hint_3: 'Choose "carries".'
+  },
+  {
+    id: 'q24', text: '___ the shop open at 9 am?', options: ['Do','Does','Is','Are'], correct: 'Does',
+    rule: 'do', difficulty: 'hard', error_type: 'wrong_auxiliary',
+    hint_1: '"The shop" is a single building (It).',
+    hint_2: 'Use "Does" for singular entities in Simple Present.',
+    hint_3: 'Select "Does".'
+  }
+];
+
+// 3. PERSISTENCE & SPACED REPETITION ENGINE
+const INTERVAL_SCHEDULE = [1, 3, 7, 14, 30];
+
+let state = JSON.parse(localStorage.getItem('gq-v7') || '{}');
+if (!state.q) state.q = {};
+if (!state.errors) state.errors = {};
+if (!state.streak) state.streak = 0;
+if (!state.lastPracticeDate) state.lastPracticeDate = null;
+if (!state.history) state.history = [];
+
+function saveState() {
+  localStorage.setItem('gq-v7', JSON.stringify(state));
+}
+
+function getQuestionState(id) {
+  if (!state.q[id]) {
+    state.q[id] = {
+      attempts: 0,
+      mistakes: 0,
+      consecutive: 0,
+      lastAttempted: null,
+      lastWrong: null,
+      repLevel: 0,
+      nextReview: null
+    };
+  }
+  return state.q[id];
+}
+
+// Spaced repetition scheduler
+function updateSpacedRepetition(p, isCorrect) {
+  const now = new Date();
+  if (isCorrect) {
+    p.repLevel = Math.min(p.repLevel + 1, INTERVAL_SCHEDULE.length);
+    const daysToAdd = INTERVAL_SCHEDULE[p.repLevel - 1] || 30;
+    const nextDate = new Date();
+    nextDate.setDate(now.getDate() + daysToAdd);
+    p.nextReview = nextDate.toISOString().slice(0,10);
+  } else {
+    p.repLevel = Math.max(1, p.repLevel - 1);
+    const nextDate = new Date();
+    nextDate.setDate(now.getDate() + 1); // review tomorrow on failure
+    p.nextReview = nextDate.toISOString().slice(0,10);
+  }
+}
+
+// Check rule-level mastery with difficulty coverage
+function ruleStats(ruleKey) {
+  const qs = questions.filter(q => q.rule === ruleKey);
+  let attempts = 0, mistakes = 0, attemptedQs = 0, recentConsecOk = 0, hasHardCleared = false;
+
+  qs.forEach(q => {
+    const p = state.q[q.id];
+    if (p && p.attempts > 0) {
+      attempts += p.attempts;
+      mistakes += p.mistakes;
+      attemptedQs++;
+      if (p.consecutive >= 3) recentConsecOk++;
+      if ((q.difficulty === 'medium' || q.difficulty === 'hard') && p.consecutive > 0) {
+        hasHardCleared = true;
+      }
+    }
+  });
+
+  const accuracy = attempts ? (attempts - mistakes) / attempts : 0;
+  return { totalQuestions: qs.length, attemptedQs, attempts, mistakes, accuracy, recentConsecOk, hasHardCleared };
+}
+
+function isRuleMastered(ruleKey) {
+  const s = ruleStats(ruleKey);
+  // Breadth: >= 5 distinct Qs, Accuracy >= 85%, Streak consistency >= 3, and >= 1 Medium/Hard question cleared
+  return s.attemptedQs >= 5 && s.accuracy >= 0.85 && s.recentConsecOk >= 3 && s.hasHardCleared;
+}
+
+// 4. ADAPTIVE QUEUE BUILDER (30% Review / 40% Weak / 30% New)
+function buildDailyMissionQueue(focusRule = null) {
+  const todayStr = new Date().toISOString().slice(0,10);
+  let pool = focusRule ? questions.filter(q => q.rule === focusRule) : questions;
+  
+  if (focusRule) {
+    // Targeted Rule Practice Mode
+    return [...pool].sort(() => Math.random() - 0.5).slice(0, 10);
+  }
+
+  let reviewPool = [];
+  let weakPool = [];
+  let newPool = [];
+
+  pool.forEach(q => {
+    const p = state.q[q.id];
+    if (!p || p.attempts === 0) {
+      newPool.push(q);
+    } else if (p.nextReview && p.nextReview <= todayStr) {
+      reviewPool.push(q);
+    } else if (p.mistakes > 0 && (p.attempts - p.mistakes) / p.attempts < 0.75) {
+      weakPool.push(q);
+    } else {
+      reviewPool.push(q);
+    }
+  });
+
+  const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+  
+  const pickedReview = shuffle(reviewPool).slice(0, 3);
+  const pickedWeak = shuffle(weakPool).slice(0, 4);
+  const pickedNew = shuffle(newPool).slice(0, 3);
+
+  let combined = [...pickedReview, ...pickedWeak, ...pickedNew];
+  
+  // Fill remaining slots if pools had insufficient items
+  if (combined.length < 10) {
+    const remaining = shuffle(pool.filter(q => !combined.some(c => c.id === q.id)));
+    combined = combined.concat(remaining.slice(0, 10 - combined.length));
+  }
+
+  return shuffle(combined);
+}
+
+// 5. RUNTIME STATE
+let queue = [];
+let pos = 0;
+let score = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let selectedOption = null;
+let locked = false;
+let hintTier = 0;
+let heartsLeft = 3;
+let sessionSeenCount = {};
+let currentModeTitle = "Daily Mission";
+
+const $ = id => document.getElementById(id);
+
+function showScreen(id) {
+  ['loginScreen', 'homeScreen', 'quizScreen', 'resultScreen', 'parentScreen'].forEach(s => $(s).classList.add('hidden'));
+  $(id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+function updateStreak() {
+  const todayStr = new Date().toISOString().slice(0,10);
+  if (!state.lastPracticeDate) {
+    state.streak = 1;
+    state.lastPracticeDate = todayStr;
+  } else if (state.lastPracticeDate !== todayStr) {
+    const last = new Date(state.lastPracticeDate);
+    const current = new Date(todayStr);
+    const diffDays = Math.round((current - last) / (1000 * 60 * 60 * 24));
+    if (diffDays === 1) {
+      state.streak += 1;
+    } else if (diffDays > 1) {
+      state.streak = 1; // Non-punitive reset
+    }
+    state.lastPracticeDate = todayStr;
+  }
+  saveState();
+}
+
+function renderDashboard() {
+  const masteredCount = rules.filter(r => isRuleMastered(r[0])).length;
+  const rankIdx = Math.min(masteredCount, RANKS.length - 1);
+  const currentRank = RANKS[rankIdx];
+
+  $('mastered').textContent = masteredCount;
+  $('totalRules').textContent = rules.length;
+  $('rankBadge').textContent = `👨‍🚀 ${currentRank}`;
+  $('rankTitle').textContent = `${currentRank} Explorer`;
+  $('masteryFill').style.width = Math.round((masteredCount / rules.length) * 100) + '%';
+
+  if (state.streak > 0) {
+    $('streakBanner').textContent = `🌟 Great work — ${state.streak} day${state.streak > 1 ? 's' : ''} of practice!`;
+  } else {
+    $('streakBanner').textContent = '🌟 Start your mission streak today!';
+  }
+
+  const today = state.today || { date: new Date().toISOString().slice(0,10), questions: 0, correct: 0, improved: 0 };
+  $('todayQuestions').textContent = today.questions;
+  $('todayCorrect').textContent = today.correct;
+  $('todayAccuracy').textContent = (today.questions ? Math.round((today.correct / today.questions) * 100) : 0) + '%';
+  $('todayImproved').textContent = today.improved;
+
+  // Interactive Learning Map
+  $('mapList').innerHTML = rules.map(r => {
+    const s = ruleStats(r[0]);
+    const mastered = isRuleMastered(r[0]);
+    const attempted = s.attempts > 0;
+    const weak = attempted && s.accuracy < 0.7;
+    const cls = mastered ? 'mastered' : (weak ? 'need' : 'learning');
+    const status = mastered ? 'MASTERED' : (weak ? 'PRACTICE' : (attempted ? 'IN PROGRESS' : 'NEW'));
+    const sub = mastered 
+      ? 'Principle mastered ⭐' 
+      : (weak ? 'Needs reinforcement • Tap to practise' : (attempted ? `${Math.round(s.accuracy*100)}% accuracy (${s.attemptedQs}/${s.totalQuestions} Qs)` : 'Tap to start learning'));
+    const dot = mastered ? '✓' : (weak ? '!' : '•');
+
+    return `<div class="map-card ${cls}" data-rule="${r[0]}">
+      <div class="dot">${dot}</div>
+      <div style="flex:1">
+        <b style="font-size:14px">${r[1]}</b>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${sub}</div>
+      </div>
+      <span class="status ${cls}">${status}</span>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('.map-card').forEach(card => {
+    card.onclick = () => startQuiz(card.dataset.rule, `Focus: ${card.dataset.rule}`);
+  });
+
+  if (masteredCount < rules.length) {
+    const nextRank = RANKS[Math.min(masteredCount + 1, RANKS.length - 1)];
+    $('nextRankText').textContent = `Master remaining principles to unlock the ${nextRank} Rank.`;
+  } else {
+    $('nextRankText').textContent = 'All principles mastered! Complete daily missions to maintain rank retention.';
+  }
+}
+
+function startQuiz(focusRule = null, modeLabel = "Daily Mission") {
+  queue = buildDailyMissionQueue(focusRule);
+  pos = 0;
+  score = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  heartsLeft = 3;
+  sessionSeenCount = {};
+  currentModeTitle = modeLabel;
+  $('quizModeLabel').textContent = currentModeTitle;
+  showScreen('quizScreen');
+  renderQuestion();
+}
+
+function renderHearts() {
+  let hearts = '';
+  for (let i = 0; i < 3; i++) {
+    hearts += i < heartsLeft ? '❤️' : '<span class="heart-used">🤍</span>';
+  }
+  $('hintHearts').innerHTML = hearts;
+  $('hintBtn').disabled = heartsLeft <= 0;
+  if (heartsLeft === 3) $('hintBtn').textContent = '💡 Hint 1 (Concept)';
+  else if (heartsLeft === 2) $('hintBtn').textContent = '💡 Hint 2 (Rule)';
+  else if (heartsLeft === 1) $('hintBtn').textContent = '💡 Hint 3 (Closer)';
+  else $('hintBtn').textContent = '🔒 No Hints Left';
+}
+
+function renderQuestion() {
+  selectedOption = null;
+  locked = false;
+  hintTier = 0;
+  const q = queue[pos];
+
+  $('progressVal').textContent = `Question ${pos + 1} of ${queue.length}`;
+  $('progressBar').style.width = ((pos / queue.length) * 100) + '%';
+  $('scoreVal').textContent = score;
+  $('questionText').textContent = q.text;
+
+  // Reset hints
+  $('hintContent').classList.add('hidden');
+  $('hintContent').textContent = '';
+  renderHearts();
+
+  $('feedbackText').textContent = '';
+  $('feedbackText').className = 'feedback-box';
+  $('rulebookBox').classList.add('hidden');
+
+  // Render options (English only)
+  $('answersGrid').innerHTML = [...q.options].sort(() => Math.random() - 0.5).map(opt =>
+    `<button class="answer-btn" data-v="${opt.replace(/"/g, '&quot;')}">${opt}</button>`
+  ).join('');
+
+  document.querySelectorAll('.answer-btn').forEach(btn => {
+    btn.onclick = () => {
+      if (locked) return;
+      document.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedOption = btn.dataset.v;
+    };
+  });
+
+  $('submitBtn').textContent = pos === queue.length - 1 ? 'SUBMIT & FINISH 🚀' : 'SUBMIT ANSWER →';
+}
+
+function triggerHint() {
+  if (heartsLeft <= 0 || locked) return;
+  const q = queue[pos];
+  heartsLeft--;
+  hintTier++;
+
+  $('hintContent').classList.remove('hidden');
+  if (hintTier === 1) {
+    $('hintContent').innerHTML = `<b>Hint 1:</b> ${q.hint_1}`;
+  } else if (hintTier === 2) {
+    $('hintContent').innerHTML = `<b>Hint 2:</b> ${q.hint_2}`;
+  } else {
+    $('hintContent').innerHTML = `<b>Hint 3:</b> ${q.hint_3}`;
+  }
+  renderHearts();
+}
+
+function evaluateAnswer() {
+  if (locked) return;
+  if (!selectedOption) {
+    alert('Please choose an answer first.');
+    return;
+  }
+  locked = true;
+  const q = queue[pos];
+  const p = getQuestionState(q.id);
+  const wasRuleMasteredBefore = isRuleMastered(q.rule);
+  const isCorrect = selectedOption === q.correct;
+
+  // Track session attempts
+  let todayStr = new Date().toISOString().slice(0,10);
+  let today = state.today || { date: todayStr, questions: 0, correct: 0, improved: 0 };
+  if (today.date !== todayStr) today = { date: todayStr, questions: 0, correct: 0, improved: 0 };
+  today.questions++;
+  if (isCorrect) today.correct++;
+  state.today = today;
+
+  document.querySelectorAll('.answer-btn').forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.v === q.correct) btn.classList.add('correct');
+    if (!isCorrect && btn.dataset.v === selectedOption) btn.classList.add('wrong');
+  });
+
+  p.attempts++;
+  p.lastAttempted = new Date().toISOString();
+  sessionSeenCount[q.id] = (sessionSeenCount[q.id] || 0) + 1;
+
+  if (isCorrect) {
+    score++;
+    correctCount++;
+    p.consecutive++;
+    updateSpacedRepetition(p, true);
+    saveState();
+
+    if (!wasRuleMasteredBefore && isRuleMastered(q.rule)) {
+      state.today.improved++;
+      saveState();
+    }
+
+    setTimeout(() => {
+      pos++;
+      if (pos >= queue.length) finishQuiz();
+      else renderQuestion();
+    }, 500);
+  } else {
+    wrongCount++;
+    p.mistakes++;
+    p.consecutive = 0;
+    p.lastWrong = new Date().toISOString();
+    updateSpacedRepetition(p, false);
+
+    // Record error category
+    const errType = q.error_type || 'general_grammar';
+    state.errors[errType] = (state.errors[errType] || 0) + 1;
+    saveState();
+
+    const ruleInfo = rules.find(r => r[0] === q.rule);
+    const explanation = ruleInfo ? ruleInfo[2] : '';
+    $('feedbackText').className = 'feedback-box feedback-wrong';
+    $('feedbackText').innerHTML = `❌ Answer: <b>${q.correct}</b><br><span style="font-size:13px">${explanation}</span>`;
+
+    // Interleave Retry: insert 2-3 questions down if under 3 appearances
+    const appearances = sessionSeenCount[q.id] || 1;
+    if (appearances < 3) {
+      const gap = 2 + Math.floor(Math.random() * 2);
+      const insertAt = Math.min(pos + 1 + gap, queue.length);
+      queue.splice(insertAt, 0, q);
+    }
+
+    setTimeout(() => {
+      pos++;
+      if (pos >= queue.length) finishQuiz();
+      else renderQuestion();
+    }, 2000);
+  }
+}
+
+function finishQuiz() {
+  updateStreak();
+  const total = correctCount + wrongCount;
+  const pct = total ? Math.round((correctCount / total) * 100) : 0;
+  
+  $('resultPct').textContent = pct + '%';
+  $('resCorrect').textContent = correctCount;
+  $('resWrong').textContent = wrongCount;
+
+  // Feedback categorisation
+  let strongRules = [];
+  let weakRules = [];
+  rules.forEach(r => {
+    if (isRuleMastered(r[0])) strongRules.push(r[1]);
+    else {
+      const st = ruleStats(r[0]);
+      if (st.attempts > 0 && st.accuracy < 0.7) weakRules.push(r[1]);
+    }
+  });
+
+  $('resStrong').textContent = strongRules.length ? strongRules.slice(0,2).join(', ') : 'Building foundation';
+  $('resWeak').textContent = weakRules.length ? weakRules.slice(0,2).join(', ') : 'None! Keep advancing';
+
+  // Count reviews due tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomStr = tomorrow.toISOString().slice(0,10);
+  let dueCount = 0;
+  Object.values(state.q).forEach(q => {
+    if (q.nextReview && q.nextReview <= tomStr) dueCount++;
+  });
+  $('resReviewCount').textContent = dueCount;
+
+  showScreen('resultScreen');
+}
+
+function renderParentDashboard() {
+  const masteredCount = rules.filter(r => isRuleMastered(r[0])).length;
+  let totalQ = 0, totalC = 0;
+  rules.forEach(r => {
+    const s = ruleStats(r[0]);
+    totalQ += s.attempts;
+    totalC += s.attempts - s.mistakes;
+  });
+
+  $('pMastery').textContent = `${masteredCount}/${rules.length}`;
+  $('pAccuracy').textContent = (totalQ ? Math.round((totalC / totalQ) * 100) : 0) + '%';
+  $('pQuestions').textContent = totalQ;
+  $('pStreak').textContent = `${state.streak} Days`;
+
+  // Error type breakdown
+  const errorKeys = Object.keys(state.errors);
+  if (errorKeys.length === 0) {
+    $('errorAnalysisList').innerHTML = '<i>No recurring mistakes recorded yet.</i>';
+  } else {
+    $('errorAnalysisList').innerHTML = errorKeys.map(k => {
+      const label = k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      return `<div style="display:flex;justify-content:space-between;padding:3px 0">
+        <span>${label}</span><b>${state.errors[k]} mistake${state.errors[k] > 1 ? 's' : ''}</b>
+      </div>`;
+    }).join('');
+  }
+
+  // Principle performance
+  $('parentRulesList').innerHTML = rules.map(r => {
+    const s = ruleStats(r[0]);
+    const mastered = isRuleMastered(r[0]);
+    const weak = s.attempts > 0 && s.accuracy < 0.7;
+    const accPct = s.attempts ? Math.round(s.accuracy * 100) : 0;
+    
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #ece4fb">
+      <div style="max-width:75%">
+        <b style="font-size:13px">${r[1]}</b>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">
+          ${s.attemptedQs}/${s.totalQuestions} questions • ${accPct}% accuracy • Hard cleared: ${s.hasHardCleared ? 'Yes ✓' : 'No ✗'}
+        </div>
+      </div>
+      <span class="status ${mastered ? 'mastered' : (weak ? 'need' : 'learning')}">
+        ${mastered ? 'MASTERED' : (weak ? 'WEAK' : (s.attempts ? 'LEARNING' : 'NEW'))}
+      </span>
+    </div>`;
+  }).join('');
+
+  showScreen('parentScreen');
+}
+
+// 6. EVENT BINDINGS
+$('loginBtn').onclick = () => {
+  const u = $('username').value.trim();
+  const p = $('pin').value.trim();
+  if (!u || !/^[0-9]{4,6}$/.test(p)) {
+    alert('Please enter an explorer username and a 4–6 digit numeric PIN.');
+    return;
+  }
+  state.username = u;
+  saveState();
+  renderDashboard();
+  showScreen('homeScreen');
+};
+
+$('username').addEventListener('keydown', e => { if (e.key === 'Enter') $('pin').focus(); });
+$('pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
+
+$('startMissionBtn').onclick = () => startQuiz(null, "Daily Mission");
+$('submitBtn').onclick = evaluateAnswer;
+$('hintBtn').onclick = triggerHint;
+$('continueMissionBtn').onclick = () => startQuiz(null, "Daily Mission");
+$('backHomeBtn').onclick = () => { renderDashboard(); showScreen('homeScreen'); };
+$('logoutBtn').onclick = () => showScreen('loginScreen');
+$('parentViewBtn').onclick = renderParentDashboard;
+$('closeParentBtn').onclick = () => { renderDashboard(); showScreen('homeScreen'); };
+
+$('helpBtn').onclick = () => {
+  const currentQ = queue[pos];
+  $('rulebookBox').innerHTML = `<h4 style="margin:0 0 8px;color:var(--green-deep)">🛰️ Simple Present Mission Manual</h4>` + 
+    rules.map(r => `
+      <div class="rule-item" style="${r[0] === currentQ.rule ? 'background:#e8f4ec;padding:6px;border-radius:6px;' : ''}">
+        <b>${r[1]} ${r[0] === currentQ.rule ? '⭐ Relevant' : ''}</b>
+        <div>${r[2]}</div>
+        <div style="color:var(--text-muted)">${r[3]}</div>
+      </div>
+    `).join('');
+  $('rulebookBox').classList.toggle('hidden');
+  $('rulebookBox').scrollIntoView({ behavior: 'smooth' });
+};
+
+$('forgotBtn').onclick = () => alert('PIN recovery will connect via Supabase.');
+$('createBtn').onclick = () => alert('Account creation will connect via Supabase.');
+$('settingsBtn').onclick = () => alert('Settings: Audio and Theme controls.');
+</script>
+</body>
+</html>
